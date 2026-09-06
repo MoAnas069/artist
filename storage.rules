@@ -1,0 +1,37 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ─── Public read for all content images ──────────
+    match /artworks/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /journal/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /products/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /settings/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // ─── Reference files from contact form ───────────
+    match /references/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if true;
+    }
+
+    // ─── Catch-all: deny ─────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
