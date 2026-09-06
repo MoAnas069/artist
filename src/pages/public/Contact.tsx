@@ -5,6 +5,7 @@ import { uploadFiles } from '../../services/storageService';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import type { ContactMessageFormData } from '../../types';
 import Footer from '../../components/layout/Footer';
+import BackToHome from '../../components/layout/BackToHome';
 
 export default function Contact() {
   const { settings } = useSiteSettings();
@@ -104,6 +105,7 @@ export default function Contact() {
 
   return (
     <main>
+      <BackToHome />
       {/* Header */}
       <section
         style={{
@@ -194,7 +196,7 @@ export default function Contact() {
             </div>
 
             {/* Budget & Deadline */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-lg)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 'var(--space-lg)' }}>
               <div>
                 <label style={labelStyle}>Budget</label>
                 <input

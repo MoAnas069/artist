@@ -367,9 +367,26 @@ ul, ol {
 }
 
 @media (max-width: 1023px) {
+  .admin-mobile-header {
+    display: flex !important;
+  }
+
   .admin-main {
     margin-left: 0;
-    padding: 1rem;
+    padding: 5rem 1rem 2rem 1rem !important;
+  }
+
+  .admin-sidebar {
+    transform: translateX(-100%);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .admin-sidebar.admin-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .admin-drawer-close {
+    display: block !important;
   }
 }
 
@@ -585,4 +602,25 @@ ul, ol {
 .artwork-image-container:hover .artwork-image {
   transform: scale(1.038);
 }
+
+/* ─── Mobile Responsiveness Enhancements ────────────────── */
+@media (max-width: 768px) {
+  /* Ensure gallery cards on mobile expand to 100% width cleanly */
+  .work-item-link {
+    align-items: center !important;
+    width: 100% !important;
+  }
+  .work-item-link > div,
+  .work-item-link > h2 {
+    width: 100% !important;
+  }
+}
+
+/* On touch devices, disable custom cursor hiding so native touch functions smoothly */
+@media (pointer: coarse) {
+  * {
+    cursor: auto !important;
+  }
+}
+
 

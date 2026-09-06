@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useIsMobile } from '../../hooks/useMediaQuery';
 import Work from './Work';
 import Me from './Me';
 import Journal from './Journal';
@@ -10,6 +11,7 @@ import Contact from './Contact';
 export default function Home() {
   const { settings } = useSiteSettings();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [pos, setPos] = useState<{ x: number; y: number }>({
     x: typeof window !== 'undefined' ? window.innerWidth / 2 : 500,
@@ -220,7 +222,9 @@ export default function Home() {
       }}
     >
       <style>{`
-        * { cursor: none !important; }
+        @media (pointer: fine) {
+          * { cursor: none !important; }
+        }
       `}</style>
 
       {/* LAYER A: Clean White/Ivory Surface */}
@@ -238,13 +242,14 @@ export default function Home() {
           style={{
             position: 'relative',
             width: '100vw',
-            height: '100vh',
+            height: isMobile ? '88vh' : '100vh',
+            minHeight: isMobile ? 540 : 'auto',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
-            padding: 'var(--space-xl) var(--space-lg)',
+            padding: isMobile ? '2rem 1.5rem' : 'var(--space-xl) var(--space-lg)',
             boxSizing: 'border-box',
           }}
         >
@@ -252,7 +257,7 @@ export default function Home() {
             ref={titleRef}
             className="type-display-xl"
             style={{
-              fontSize: 'clamp(3rem, 9vw, 7.5rem)',
+              fontSize: 'clamp(2.75rem, 8.5vw, 7.5rem)',
               fontWeight: 400,
               letterSpacing: '-0.03em',
               lineHeight: 0.95,
@@ -264,61 +269,235 @@ export default function Home() {
           >
             {settings.artistName}
           </h1>
-        </section>
 
-        {/* Directory Sections (White Surface with Hidden Color) */}
-        <div id="home-sections" style={{ width: '100%' }}>
-          {homeSections.map((item, i) => (
+          {/* On mobile: reveal statement, bio and direct About button */}
+          {isMobile && (
             <div
-              key={item.path}
-              onClick={(e) => triggerPageZoom(item.path, item.label, item.component, e.clientX, e.clientY)}
-              onMouseEnter={() => setHoveredSection(i)}
-              onMouseLeave={() => setHoveredSection(null)}
               style={{
-                position: 'relative',
-                width: '100%',
+                marginTop: '1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                padding: 'clamp(2.5rem, 5vh, 4rem) clamp(2rem, 6vw, 6rem)',
-                minHeight: 'clamp(240px, 34vh, 380px)',
-                boxSizing: 'border-box',
-                cursor: 'pointer',
-                backgroundColor: 'transparent',
-                border: 'none',
+                gap: '0.75rem',
+                maxWidth: 420,
               }}
             >
-              <h2
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(3.5rem, 7.5vw, 6.2rem)',
-                  fontWeight: 400,
-                  lineHeight: 1,
-                  margin: 0,
-                  color: 'var(--color-charcoal)',
-                  letterSpacing: '-0.025em',
-                }}
-              >
-                {item.label}
-              </h2>
-
               <p
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
-                  fontWeight: 400,
+                  fontSize: 'clamp(0.95rem, 3.5vw, 1.15rem)',
                   color: 'var(--color-stone)',
-                  margin: '0.75rem 0 0 0',
-                  letterSpacing: '0.01em',
-                  maxWidth: 550,
+                  margin: 0,
+                  lineHeight: 1.5,
                 }}
               >
-                {item.sublabel}
+                {settings.homepageStatement || 'Contemporary Illustration & Narrative Art'}
               </p>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.85rem',
+                  color: 'var(--color-muted)',
+                  margin: 0,
+                  lineHeight: 1.6,
+                }}
+              >
+                {settings.shortBio || 'Exploring solitude, memory, and atmospheric worlds.'}
+              </p>
+              <button
+                onClick={(e) => triggerPageZoom('/me', 'Me', <Me />, e.clientX, e.clientY)}
+                style={{
+                  marginTop: '0.75rem',
+                  padding: '0.7rem 1.75rem',
+                  borderRadius: 999,
+                  backgroundColor: 'var(--color-charcoal)',
+                  color: 'var(--color-ivory)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+                }}
+              >
+                About Rowan Vance
+              </button>
             </div>
-          ))}
+          )}
+        </section>
+
+        {/* Directory Sections (Mobile: Living Cards | Desktop: Dual-Layer X-Ray) */}
+        <div id="home-sections" style={{ width: '100%' }}>
+          {isMobile ? (
+            <div style={{ padding: '0 1rem 3rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {homeSections.map((item, i) => (
+                <div
+                  key={item.path}
+                  onClick={(e) => triggerPageZoom(item.path, item.label, item.component, e.clientX, e.clientY)}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    minHeight: '230px',
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    padding: '2rem 1.5rem',
+                    boxSizing: 'border-box',
+                    cursor: 'pointer',
+                    boxShadow: '0 6px 24px rgba(0, 0, 0, 0.12)',
+                    WebkitTapHighlightColor: 'transparent',
+                  }}
+                >
+                  {/* Living Animated Background */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: '-12%',
+                      width: '124%',
+                      height: '124%',
+                      backgroundImage: `linear-gradient(to top, rgba(8, 8, 12, 0.88) 0%, rgba(8, 8, 12, 0.42) 55%, rgba(8, 8, 12, 0.25) 100%), url(${item.slides[0]})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      animation: `${item.driftAnim} 20s ease-in-out infinite alternate`,
+                    }}
+                  />
+
+                  {/* Floating Golden Dust Particles */}
+                  <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+                    {[15, 38, 62, 85].map((leftPct, pIdx) => (
+                      <span
+                        key={pIdx}
+                        style={{
+                          position: 'absolute',
+                          left: `${leftPct}%`,
+                          bottom: '-10px',
+                          width: `${3 + (pIdx % 2)}px`,
+                          height: `${3 + (pIdx % 2)}px`,
+                          borderRadius: '50%',
+                          backgroundColor: 'rgba(255, 230, 180, 0.75)',
+                          boxShadow: '0 0 8px rgba(255, 220, 150, 0.8)',
+                          animation: `floatingMote ${7 + pIdx * 2}s ease-in-out infinite`,
+                          animationDelay: `${pIdx * 1.2}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Shimmer Light Sweep */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: '-100%',
+                      background: 'linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%)',
+                      pointerEvents: 'none',
+                      animation: `shimmerSweep ${10 + i * 2}s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
+                      animationDelay: `${i * 1.8}s`,
+                    }}
+                  />
+
+                  {/* Card Content */}
+                  <div style={{ position: 'relative', zIndex: 2 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                      <h2
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: 'clamp(2.2rem, 7.5vw, 3rem)',
+                          fontWeight: 400,
+                          lineHeight: 1.05,
+                          margin: 0,
+                          color: '#ffffff',
+                          letterSpacing: '-0.02em',
+                          textShadow: '0 2px 16px rgba(0, 0, 0, 0.9)',
+                        }}
+                      >
+                        {item.label}
+                      </h2>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono, monospace)',
+                          fontSize: '0.7rem',
+                          color: 'rgba(255, 255, 255, 0.75)',
+                          letterSpacing: '0.12em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        OPEN →
+                      </span>
+                    </div>
+
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-body)',
+                        fontSize: '0.85rem',
+                        color: 'rgba(255, 255, 255, 0.85)',
+                        margin: '0.45rem 0 0 0',
+                        lineHeight: 1.45,
+                        textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)',
+                      }}
+                    >
+                      {item.sublabel}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            homeSections.map((item, i) => (
+              <div
+                key={item.path}
+                onClick={(e) => triggerPageZoom(item.path, item.label, item.component, e.clientX, e.clientY)}
+                onMouseEnter={() => setHoveredSection(i)}
+                onMouseLeave={() => setHoveredSection(null)}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  padding: 'clamp(2.5rem, 5vh, 4rem) clamp(2rem, 6vw, 6rem)',
+                  minHeight: 'clamp(240px, 34vh, 380px)',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                }}
+              >
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(3.5rem, 7.5vw, 6.2rem)',
+                    fontWeight: 400,
+                    lineHeight: 1,
+                    margin: 0,
+                    color: 'var(--color-charcoal)',
+                    letterSpacing: '-0.025em',
+                  }}
+                >
+                  {item.label}
+                </h2>
+
+                <p
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
+                    fontWeight: 400,
+                    color: 'var(--color-stone)',
+                    margin: '0.75rem 0 0 0',
+                    letterSpacing: '0.01em',
+                    maxWidth: 550,
+                  }}
+                >
+                  {item.sublabel}
+                </p>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Discreet studio admin access link */}
@@ -354,8 +533,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* LAYER B: Hidden Inner Colors & Dark Hero Layer (Clipped by the Circular X-Ray Aperture) */}
-      <div
+      {/* LAYER B: Hidden Inner Colors & Dark Hero Layer (Clipped by the Circular X-Ray Aperture on Desktop) */}
+      {!isMobile && (
+        <div
         style={{
           position: 'absolute',
           top: 0,
@@ -690,44 +870,47 @@ export default function Home() {
           </button>
         </div>
       </div>
+      )}
 
-      {/* Persistent Single Circular Lens Reticle (Following Cursor Everywhere) */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          pointerEvents: 'none',
-          zIndex: 900,
-          transform: `translate3d(${pos.x - lensRadius}px, ${pos.y - lensRadius}px, 0)`,
-          width: lensRadius * 2,
-          height: lensRadius * 2,
-          borderRadius: '50%',
-          border: isEnlarged
-            ? '1.8px solid rgba(255, 255, 255, 0.95)'
-            : '1.2px solid rgba(26, 26, 26, 0.65)',
-          boxShadow: isEnlarged
-            ? '0 0 35px rgba(0, 0, 0, 0.35), inset 0 0 15px rgba(255, 255, 255, 0.2)'
-            : '0 0 6px rgba(0, 0, 0, 0.08)',
-          transition: 'width 0.35s cubic-bezier(0.16, 1, 0.3, 1), height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-          opacity: isZooming ? 0 : 1,
-        }}
-      >
-        {!isEnlarged && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 4,
-              height: 4,
-              borderRadius: '50%',
-              backgroundColor: 'rgba(26, 26, 26, 0.85)',
-            }}
-          />
-        )}
-      </div>
+      {/* Persistent Single Circular Lens Reticle (Following Cursor Everywhere on Desktop) */}
+      {!isMobile && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            pointerEvents: 'none',
+            zIndex: 900,
+            transform: `translate3d(${pos.x - lensRadius}px, ${pos.y - lensRadius}px, 0)`,
+            width: lensRadius * 2,
+            height: lensRadius * 2,
+            borderRadius: '50%',
+            border: isEnlarged
+              ? '1.8px solid rgba(255, 255, 255, 0.95)'
+              : '1.2px solid rgba(26, 26, 26, 0.65)',
+            boxShadow: isEnlarged
+              ? '0 0 35px rgba(0, 0, 0, 0.35), inset 0 0 15px rgba(255, 255, 255, 0.2)'
+              : '0 0 6px rgba(0, 0, 0, 0.08)',
+            transition: 'width 0.35s cubic-bezier(0.16, 1, 0.3, 1), height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+            opacity: isZooming ? 0 : 1,
+          }}
+        >
+          {!isEnlarged && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 4,
+                height: 4,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(26, 26, 26, 0.85)',
+              }}
+            />
+          )}
+        </div>
+      )}
 
       {/* Destination Page Circular Aperture Expansion */}
       {isZooming && zoomTarget && (

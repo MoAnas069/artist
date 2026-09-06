@@ -8,6 +8,7 @@ import { formatEditorialDate } from '../../utils/helpers';
 import { usePrefersReducedMotion } from '../../hooks/useMediaQuery';
 import LoadingState from '../../components/ui/LoadingState';
 import Footer from '../../components/layout/Footer';
+import BackToHome from '../../components/layout/BackToHome';
 
 function ScrollReveal({ children }: { children: React.ReactNode }) {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -24,7 +25,7 @@ function ScrollReveal({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function JournalPostPage() {
+export default function JournalPost() {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<JournalPost | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,8 +36,8 @@ export default function JournalPostPage() {
     setLoading(true);
     getPostBySlug(slug)
       .then((p) => {
-        if (!p) setNotFound(true);
-        else setPost(p);
+        if (!p) { setNotFound(true); return; }
+        setPost(p);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -58,6 +59,7 @@ export default function JournalPostPage() {
 
   return (
     <main>
+      <BackToHome />
       {/* Header */}
       <section
         style={{

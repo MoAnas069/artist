@@ -1,6 +1,7 @@
 import { useSiteSettings } from '../../hooks/useSiteSettings';
 import LoadingState from '../../components/ui/LoadingState';
 import Footer from '../../components/layout/Footer';
+import BackToHome from '../../components/layout/BackToHome';
 
 export default function Me() {
   const { settings, loading } = useSiteSettings();
@@ -9,6 +10,7 @@ export default function Me() {
 
   return (
     <main style={{ backgroundColor: 'var(--color-ivory)', color: 'var(--color-charcoal)' }}>
+      <BackToHome />
       {/* Hero — Centered vertically and horizontally in viewport */}
       <section
         style={{

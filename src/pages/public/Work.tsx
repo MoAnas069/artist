@@ -8,6 +8,7 @@ import { usePrefersReducedMotion } from '../../hooks/useMediaQuery';
 import LoadingState from '../../components/ui/LoadingState';
 import EmptyState from '../../components/ui/EmptyState';
 import Footer from '../../components/layout/Footer';
+import BackToHome from '../../components/layout/BackToHome';
 
 function ScrollReveal({ children }: { children: React.ReactNode; delay?: number }) {
   return <>{children}</>;
@@ -34,6 +35,7 @@ export default function Work() {
 
   return (
     <main>
+      <BackToHome />
       {/* Header */}
       <section
         style={{
@@ -83,6 +85,7 @@ export default function Work() {
                   <ScrollReveal key={artwork.id} delay={0}>
                     <Link
                       to={`/work/${artwork.slug}`}
+                      className="work-item-link"
                       data-cursor="Open"
                       style={{
                         display: 'flex',

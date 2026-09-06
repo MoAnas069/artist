@@ -8,6 +8,7 @@ import { usePrefersReducedMotion } from '../../hooks/useMediaQuery';
 import LoadingState from '../../components/ui/LoadingState';
 import Footer from '../../components/layout/Footer';
 import ShopInquiryModal from '../../components/shop/ShopInquiryModal';
+import BackToHome from '../../components/layout/BackToHome';
 
 function ScrollReveal({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
@@ -49,6 +50,7 @@ export default function ShopProduct() {
 
   return (
     <main>
+      <BackToHome />
       {/* Product */}
       <section style={{
         minHeight: '100vh',

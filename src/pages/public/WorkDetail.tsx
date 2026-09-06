@@ -6,6 +6,7 @@ import type { Artwork } from '../../types';
 import { usePrefersReducedMotion } from '../../hooks/useMediaQuery';
 import LoadingState from '../../components/ui/LoadingState';
 import Footer from '../../components/layout/Footer';
+import BackToHome from '../../components/layout/BackToHome';
 
 function ScrollReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -56,6 +57,7 @@ export default function WorkDetail() {
 
   return (
     <main>
+      <BackToHome />
       {/* Hero / Cover Image */}
       <section
         style={{
