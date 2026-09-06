@@ -34,6 +34,8 @@ export default function Home() {
     y: typeof window !== 'undefined' ? window.innerHeight / 2 : 400,
   });
 
+  const [activeSections, setActiveSections] = useState<Record<number, boolean>>({});
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const rafRef = useRef<number | null>(null);
   const targetPos = useRef({ x: pos.x, y: pos.y });
@@ -41,10 +43,30 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
+
+      if (isMobile) {
+        const vHeight = window.innerHeight;
+        const newActive: Record<number, boolean> = {};
+
+        sectionRefs.current.forEach((el, idx) => {
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          // Active when the section overlaps the central zone of the mobile screen
+          const isInCenterZone = rect.top < vHeight * 0.72 && rect.bottom > vHeight * 0.28;
+          newActive[idx] = isInCenterZone;
+        });
+
+        setActiveSections(newActive);
+      }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    // Initial check
+    if (isMobile) {
+      setTimeout(handleScroll, 100);
+    }
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMobile]);
 
   const checkProximity = useCallback((x: number, y: number) => {
     if (!titleRef.current) return false;
@@ -242,14 +264,13 @@ export default function Home() {
           style={{
             position: 'relative',
             width: '100vw',
-            height: isMobile ? '88vh' : '100vh',
-            minHeight: isMobile ? 540 : 'auto',
+            height: '100vh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
-            padding: isMobile ? '2rem 1.5rem' : 'var(--space-xl) var(--space-lg)',
+            padding: 'var(--space-xl) var(--space-lg)',
             boxSizing: 'border-box',
           }}
         >
@@ -257,7 +278,7 @@ export default function Home() {
             ref={titleRef}
             className="type-display-xl"
             style={{
-              fontSize: 'clamp(2.75rem, 8.5vw, 7.5rem)',
+              fontSize: 'clamp(3rem, 9vw, 7.5rem)',
               fontWeight: 400,
               letterSpacing: '-0.03em',
               lineHeight: 0.95,
@@ -269,186 +290,17 @@ export default function Home() {
           >
             {settings.artistName}
           </h1>
-
-          {/* On mobile: reveal statement, bio and direct About button */}
-          {isMobile && (
-            <div
-              style={{
-                marginTop: '1.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.75rem',
-                maxWidth: 420,
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 'clamp(0.95rem, 3.5vw, 1.15rem)',
-                  color: 'var(--color-stone)',
-                  margin: 0,
-                  lineHeight: 1.5,
-                }}
-              >
-                {settings.homepageStatement || 'Contemporary Illustration & Narrative Art'}
-              </p>
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.85rem',
-                  color: 'var(--color-muted)',
-                  margin: 0,
-                  lineHeight: 1.6,
-                }}
-              >
-                {settings.shortBio || 'Exploring solitude, memory, and atmospheric worlds.'}
-              </p>
-              <button
-                onClick={(e) => triggerPageZoom('/me', 'Me', <Me />, e.clientX, e.clientY)}
-                style={{
-                  marginTop: '0.75rem',
-                  padding: '0.7rem 1.75rem',
-                  borderRadius: 999,
-                  backgroundColor: 'var(--color-charcoal)',
-                  color: 'var(--color-ivory)',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.16em',
-                  textTransform: 'uppercase',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
-                }}
-              >
-                About Rowan Vance
-              </button>
-            </div>
-          )}
         </section>
 
-        {/* Directory Sections (Mobile: Living Cards | Desktop: Dual-Layer X-Ray) */}
+        {/* Directory Sections (Scroll-Transformed on Mobile | Cursor X-Ray on Desktop) */}
         <div id="home-sections" style={{ width: '100%' }}>
-          {isMobile ? (
-            <div style={{ padding: '0 1rem 3rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {homeSections.map((item, i) => (
-                <div
-                  key={item.path}
-                  onClick={(e) => triggerPageZoom(item.path, item.label, item.component, e.clientX, e.clientY)}
-                  style={{
-                    position: 'relative',
-                    width: '100%',
-                    minHeight: '230px',
-                    borderRadius: 16,
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    padding: '2rem 1.5rem',
-                    boxSizing: 'border-box',
-                    cursor: 'pointer',
-                    boxShadow: '0 6px 24px rgba(0, 0, 0, 0.12)',
-                    WebkitTapHighlightColor: 'transparent',
-                  }}
-                >
-                  {/* Living Animated Background */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: '-12%',
-                      width: '124%',
-                      height: '124%',
-                      backgroundImage: `linear-gradient(to top, rgba(8, 8, 12, 0.88) 0%, rgba(8, 8, 12, 0.42) 55%, rgba(8, 8, 12, 0.25) 100%), url(${item.slides[0]})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      animation: `${item.driftAnim} 20s ease-in-out infinite alternate`,
-                    }}
-                  />
+          {homeSections.map((item, i) => {
+            const isTransformed = isMobile && !!activeSections[i];
 
-                  {/* Floating Golden Dust Particles */}
-                  <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-                    {[15, 38, 62, 85].map((leftPct, pIdx) => (
-                      <span
-                        key={pIdx}
-                        style={{
-                          position: 'absolute',
-                          left: `${leftPct}%`,
-                          bottom: '-10px',
-                          width: `${3 + (pIdx % 2)}px`,
-                          height: `${3 + (pIdx % 2)}px`,
-                          borderRadius: '50%',
-                          backgroundColor: 'rgba(255, 230, 180, 0.75)',
-                          boxShadow: '0 0 8px rgba(255, 220, 150, 0.8)',
-                          animation: `floatingMote ${7 + pIdx * 2}s ease-in-out infinite`,
-                          animationDelay: `${pIdx * 1.2}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Shimmer Light Sweep */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: '-100%',
-                      background: 'linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%)',
-                      pointerEvents: 'none',
-                      animation: `shimmerSweep ${10 + i * 2}s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
-                      animationDelay: `${i * 1.8}s`,
-                    }}
-                  />
-
-                  {/* Card Content */}
-                  <div style={{ position: 'relative', zIndex: 2 }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                      <h2
-                        style={{
-                          fontFamily: 'var(--font-display)',
-                          fontSize: 'clamp(2.2rem, 7.5vw, 3rem)',
-                          fontWeight: 400,
-                          lineHeight: 1.05,
-                          margin: 0,
-                          color: '#ffffff',
-                          letterSpacing: '-0.02em',
-                          textShadow: '0 2px 16px rgba(0, 0, 0, 0.9)',
-                        }}
-                      >
-                        {item.label}
-                      </h2>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-mono, monospace)',
-                          fontSize: '0.7rem',
-                          color: 'rgba(255, 255, 255, 0.75)',
-                          letterSpacing: '0.12em',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        OPEN →
-                      </span>
-                    </div>
-
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '0.85rem',
-                        color: 'rgba(255, 255, 255, 0.85)',
-                        margin: '0.45rem 0 0 0',
-                        lineHeight: 1.45,
-                        textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)',
-                      }}
-                    >
-                      {item.sublabel}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            homeSections.map((item, i) => (
+            return (
               <div
                 key={item.path}
+                ref={(el) => { sectionRefs.current[i] = el; }}
                 onClick={(e) => triggerPageZoom(item.path, item.label, item.component, e.clientX, e.clientY)}
                 onMouseEnter={() => setHoveredSection(i)}
                 onMouseLeave={() => setHoveredSection(null)}
@@ -466,10 +318,14 @@ export default function Home() {
                   cursor: 'pointer',
                   backgroundColor: 'transparent',
                   border: 'none',
+                  overflow: 'hidden',
                 }}
               >
+                {/* Surface White Typography */}
                 <h2
                   style={{
+                    position: 'relative',
+                    zIndex: 1,
                     fontFamily: 'var(--font-display)',
                     fontSize: 'clamp(3.5rem, 7.5vw, 6.2rem)',
                     fontWeight: 400,
@@ -484,6 +340,8 @@ export default function Home() {
 
                 <p
                   style={{
+                    position: 'relative',
+                    zIndex: 1,
                     fontFamily: 'var(--font-body)',
                     fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
                     fontWeight: 400,
@@ -495,41 +353,118 @@ export default function Home() {
                 >
                   {item.sublabel}
                 </p>
-              </div>
-            ))
-          )}
-        </div>
 
-        {/* Discreet studio admin access link */}
-        <div
-          style={{
-            width: '100%',
-            padding: '3rem 2rem 4rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: 0.35,
-            transition: 'opacity 0.25s ease',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.35')}
-        >
-          <button
-            onClick={() => navigate('/admin')}
-            style={{
-              fontFamily: 'var(--font-mono, monospace)',
-              fontSize: '0.7rem',
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'var(--color-charcoal)',
-              cursor: 'pointer',
-              background: 'none',
-              border: 'none',
-              padding: '0.5rem 1rem',
-            }}
-          >
-            STUDIO CMS ↗
-          </button>
+                {/* Mobile Scroll-Driven Transformation: Circular aperture expands as you scroll to each section */}
+                {isMobile && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: 2,
+                      clipPath: isTransformed
+                        ? 'circle(125% at 50% 50%)'
+                        : 'circle(0% at 50% 50%)',
+                      WebkitClipPath: isTransformed
+                        ? 'circle(125% at 50% 50%)'
+                        : 'circle(0% at 50% 50%)',
+                      transition: 'clip-path 0.8s cubic-bezier(0.16, 1, 0.3, 1), -webkit-clip-path 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textAlign: 'center',
+                      padding: 'clamp(2.5rem, 5vh, 4rem) clamp(2rem, 6vw, 6rem)',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    {/* Animated living artwork background */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: '-14%',
+                        width: '128%',
+                        height: '128%',
+                        backgroundImage: `linear-gradient(rgba(10, 10, 14, 0.42), rgba(10, 10, 14, 0.7)), url(${item.slides[0]})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        animation: `${item.driftAnim} 20s ease-in-out infinite alternate`,
+                      }}
+                    />
+
+                    {/* Floating golden studio dust particles */}
+                    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+                      {[15, 38, 62, 85].map((leftPct, pIdx) => (
+                        <span
+                          key={pIdx}
+                          style={{
+                            position: 'absolute',
+                            left: `${leftPct}%`,
+                            bottom: '-10px',
+                            width: `${3 + (pIdx % 2)}px`,
+                            height: `${3 + (pIdx % 2)}px`,
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(255, 230, 180, 0.75)',
+                            boxShadow: '0 0 8px rgba(255, 220, 150, 0.8)',
+                            animation: `floatingMote ${7 + pIdx * 2}s ease-in-out infinite`,
+                            animationDelay: `${pIdx * 1.2}s`,
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Shimmer light sweep */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: '-100%',
+                        background: 'linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%)',
+                        pointerEvents: 'none',
+                        animation: `shimmerSweep ${10 + i * 2}s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
+                        animationDelay: `${i * 1.8}s`,
+                      }}
+                    />
+
+                    {/* Transformed Title & Subtitle */}
+                    <h2
+                      style={{
+                        position: 'relative',
+                        zIndex: 3,
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 'clamp(3.5rem, 7.5vw, 6.2rem)',
+                        fontWeight: 400,
+                        lineHeight: 1,
+                        margin: 0,
+                        color: '#ffffff',
+                        letterSpacing: '-0.025em',
+                        textShadow: '0 4px 20px rgba(0, 0, 0, 0.9)',
+                      }}
+                    >
+                      {item.label}
+                    </h2>
+
+                    <p
+                      style={{
+                        position: 'relative',
+                        zIndex: 3,
+                        fontFamily: 'var(--font-body)',
+                        fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
+                        fontWeight: 400,
+                        color: 'rgba(255, 255, 255, 0.92)',
+                        margin: '0.75rem 0 0 0',
+                        letterSpacing: '0.01em',
+                        maxWidth: 550,
+                        textShadow: '0 2px 14px rgba(0, 0, 0, 0.85)',
+                      }}
+                    >
+                      {item.sublabel}
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -839,35 +774,6 @@ export default function Home() {
               </p>
             </div>
           ))}
-        </div>
-
-        {/* Discreet studio admin access link in Layer B */}
-        <div
-          style={{
-            width: '100%',
-            padding: '3rem 2rem 4rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <button
-            onClick={() => navigate('/admin')}
-            style={{
-              fontFamily: 'var(--font-mono, monospace)',
-              fontSize: '0.7rem',
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255, 255, 255, 0.85)',
-              cursor: 'pointer',
-              background: 'none',
-              border: 'none',
-              padding: '0.5rem 1rem',
-              textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)',
-            }}
-          >
-            STUDIO CMS ↗
-          </button>
         </div>
       </div>
       )}
