@@ -110,8 +110,8 @@ export interface SiteSettings {
   homepageStatement: string;
   homepageSubtitle: string;
   contactText: string;
-  seoTitle: string;
-  seoDescription: string;
+  seoTitle?: string;
+  seoDescription?: string;
   featuredArtworkIds: string[];
   artistPortrait: string;
   artSublabel?: string;

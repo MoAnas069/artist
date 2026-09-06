@@ -20,6 +20,7 @@ export const initialSettings: SiteSettings = {
   homepageSubtitle: 'Exploring solitude, memory, and myth through textured brushwork and quiet light',
   contactText: "Have a project or editorial commission in mind? Let's make something thoughtful together.",
   seoTitle: 'Rowan Vance — Contemporary Illustrator & Artist',
+  seoDescription: 'Portfolio and studio archive of Rowan Vance, contemporary artist and visual storyteller.',
   featuredArtworkIds: ['art-1', 'art-2', 'art-3', 'art-4'],
   artistPortrait: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1000&auto=format&fit=crop&q=80',
   artSublabel: 'Selected Paintings, Drawings & Archive',
