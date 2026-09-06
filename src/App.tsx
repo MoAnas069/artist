@@ -1,5 +1,20 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+
+function AdminShortcutListener() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        navigate('/admin');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+  return null;
+}
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './hooks/useAuth';
 import { ToastProvider } from './components/ui/Toast';
@@ -41,6 +56,7 @@ export default function App() {
         <AuthProvider>
           <ToastProvider>
             <BrowserRouter>
+              <AdminShortcutListener />
               <CustomCursor />
               <Suspense fallback={<LoadingState />}>
                 <PageTransition>

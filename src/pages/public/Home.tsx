@@ -156,35 +156,55 @@ export default function Home() {
       sublabel: settings.artSublabel || 'Selected Paintings, Drawings & Archive',
       path: '/work',
       component: <Work />,
-      image: settings.artXrayImage || 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1920&auto=format&fit=crop&q=85',
+      slides: [
+        settings.artXrayImage || 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1920&auto=format&fit=crop&q=85',
+        'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1920&auto=format&fit=crop&q=85',
+      ],
+      driftAnim: 'kenBurnsDrift1',
     },
     {
       label: 'Me',
       sublabel: settings.meSublabel || 'Biography, Philosophy & Studio Practice',
       path: '/me',
       component: <Me />,
-      image: settings.meXrayImage || settings.artistPortrait || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1920&auto=format&fit=crop&q=85',
+      slides: [
+        settings.meXrayImage || settings.artistPortrait || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1920&auto=format&fit=crop&q=85',
+        'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1920&auto=format&fit=crop&q=85',
+      ],
+      driftAnim: 'kenBurnsDrift2',
     },
     {
       label: 'Journal',
       sublabel: settings.journalSublabel || 'Studio Notes, Process & Literary Essays',
       path: '/journal',
       component: <Journal />,
-      image: settings.journalXrayImage || 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1920&auto=format&fit=crop&q=85',
+      slides: [
+        settings.journalXrayImage || 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1920&auto=format&fit=crop&q=85',
+        'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&auto=format&fit=crop&q=85',
+      ],
+      driftAnim: 'kenBurnsDrift3',
     },
     {
       label: 'Shop',
       sublabel: settings.shopSublabel || 'Limited Edition Archival Prints & Objects',
       path: '/shop',
       component: <Shop />,
-      image: settings.shopXrayImage || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1920&auto=format&fit=crop&q=85',
+      slides: [
+        settings.shopXrayImage || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1920&auto=format&fit=crop&q=85',
+        'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1920&auto=format&fit=crop&q=85',
+      ],
+      driftAnim: 'kenBurnsDrift1',
     },
     {
       label: 'Contact',
       sublabel: settings.contactSublabel || 'Commissions, Gallery Inquiries & Press',
       path: '/contact',
       component: <Contact />,
-      image: settings.contactXrayImage || 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1920&auto=format&fit=crop&q=85',
+      slides: [
+        settings.contactXrayImage || 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1920&auto=format&fit=crop&q=85',
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&auto=format&fit=crop&q=85',
+      ],
+      driftAnim: 'kenBurnsDrift2',
     },
   ];
 
@@ -300,6 +320,38 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* Discreet studio admin access link */}
+        <div
+          style={{
+            width: '100%',
+            padding: '3rem 2rem 4rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            opacity: 0.35,
+            transition: 'opacity 0.25s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.35')}
+        >
+          <button
+            onClick={() => navigate('/admin')}
+            style={{
+              fontFamily: 'var(--font-mono, monospace)',
+              fontSize: '0.7rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--color-charcoal)',
+              cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: '0.5rem 1rem',
+            }}
+          >
+            STUDIO CMS ↗
+          </button>
+        </div>
       </div>
 
       {/* LAYER B: Hidden Inner Colors & Dark Hero Layer (Clipped by the Circular X-Ray Aperture) */}
@@ -345,6 +397,41 @@ export default function Home() {
               pointerEvents: 'none',
             }}
           />
+
+          {/* Ambient Glowing Aura */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '600px',
+              height: '600px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(160, 130, 240, 0.18) 0%, rgba(220, 175, 110, 0.1) 45%, transparent 70%)',
+              filter: 'blur(60px)',
+              animation: 'auraBreath 9s ease-in-out infinite alternate',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* Floating Stardust Motes */}
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+            {[18, 36, 52, 70, 84].map((leftPct, pIdx) => (
+              <span
+                key={pIdx}
+                style={{
+                  position: 'absolute',
+                  left: `${leftPct}%`,
+                  bottom: '-10px',
+                  width: `${3 + (pIdx % 3)}px`,
+                  height: `${3 + (pIdx % 3)}px`,
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  boxShadow: '0 0 10px rgba(255, 255, 255, 0.8)',
+                  animation: `floatingMote ${8 + (pIdx % 3) * 2}s ease-in-out infinite`,
+                  animationDelay: `${pIdx * 1.6}s`,
+                }}
+              />
+            ))}
+          </div>
 
           <div
             style={{
@@ -447,15 +534,96 @@ export default function Home() {
                 minHeight: 'clamp(240px, 34vh, 380px)',
                 boxSizing: 'border-box',
                 cursor: 'pointer',
-                backgroundImage: `linear-gradient(rgba(8, 8, 10, 0.45), rgba(8, 8, 10, 0.65)), url(${item.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
                 color: '#ffffff',
                 border: 'none',
+                overflow: 'hidden',
               }}
             >
+              {/* Dynamic Living Artwork Background: Continuous Ken Burns Motion & Parallax */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: '-14%',
+                  width: '128%',
+                  height: '128%',
+                  pointerEvents: 'none',
+                  transform: `translate3d(${((pos.x / (typeof window !== 'undefined' ? window.innerWidth : 1000)) - 0.5) * -30}px, ${((pos.y / (typeof window !== 'undefined' ? window.innerHeight : 800)) - 0.5) * -20}px, 0)`,
+                  transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                  willChange: 'transform',
+                }}
+              >
+                {/* Primary animated artwork with slow cinematic pan & zoom */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: `linear-gradient(rgba(10, 10, 14, 0.42), rgba(10, 10, 14, 0.68)), url(${item.slides[0]})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    animation: `${item.driftAnim} 20s ease-in-out infinite alternate`,
+                  }}
+                />
+
+                {/* Secondary cross-fading animated artwork layer */}
+                {item.slides[1] && item.slides[1] !== item.slides[0] && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backgroundImage: `linear-gradient(rgba(10, 10, 14, 0.42), rgba(10, 10, 14, 0.68)), url(${item.slides[1]})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      animation: `artworkCrossfade 12s ease-in-out infinite alternate, ${item.driftAnim === 'kenBurnsDrift1' ? 'kenBurnsDrift2' : 'kenBurnsDrift3'} 24s ease-in-out infinite alternate`,
+                    }}
+                  />
+                )}
+              </div>
+
+              {/* Shimmering editorial light sweep */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: '-100%',
+                  background: 'linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.14) 50%, transparent 58%)',
+                  pointerEvents: 'none',
+                  animation: `shimmerSweep ${9 + i * 2.5}s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
+                  animationDelay: `${i * 1.5}s`,
+                }}
+              />
+
+              {/* Ethereal Floating Studio Dust Motes */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  overflow: 'hidden',
+                }}
+              >
+                {[12, 28, 48, 68, 85].map((leftPct, pIdx) => (
+                  <span
+                    key={pIdx}
+                    style={{
+                      position: 'absolute',
+                      left: `${leftPct}%`,
+                      bottom: '-15px',
+                      width: `${3 + (pIdx % 3)}px`,
+                      height: `${3 + (pIdx % 3)}px`,
+                      borderRadius: '50%',
+                      backgroundColor: pIdx % 2 === 0 ? 'rgba(255, 230, 180, 0.75)' : 'rgba(255, 255, 255, 0.65)',
+                      boxShadow: '0 0 10px rgba(255, 220, 150, 0.9)',
+                      animation: `floatingMote ${7 + (pIdx % 3) * 2.5}s ease-in-out infinite`,
+                      animationDelay: `${pIdx * 1.4}s`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Title with refined depth */}
               <h2
                 style={{
+                  position: 'relative',
+                  zIndex: 2,
                   fontFamily: 'var(--font-display)',
                   fontSize: 'clamp(3.5rem, 7.5vw, 6.2rem)',
                   fontWeight: 400,
@@ -463,7 +631,9 @@ export default function Home() {
                   margin: 0,
                   color: '#ffffff',
                   letterSpacing: '-0.025em',
-                  textShadow: '0 6px 30px rgba(0, 0, 0, 0.85)',
+                  textShadow: '0 6px 30px rgba(0, 0, 0, 0.9)',
+                  transform: hoveredSection === i ? 'scale(1.025)' : 'scale(1)',
+                  transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 {item.label}
@@ -471,6 +641,8 @@ export default function Home() {
 
               <p
                 style={{
+                  position: 'relative',
+                  zIndex: 2,
                   fontFamily: 'var(--font-body)',
                   fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
                   fontWeight: 400,
@@ -478,13 +650,44 @@ export default function Home() {
                   margin: '0.75rem 0 0 0',
                   letterSpacing: '0.01em',
                   maxWidth: 550,
-                  textShadow: '0 2px 16px rgba(0, 0, 0, 0.8)',
+                  textShadow: '0 2px 16px rgba(0, 0, 0, 0.85)',
+                  transform: hoveredSection === i ? 'translateY(-2px)' : 'none',
+                  transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 {item.sublabel}
               </p>
             </div>
           ))}
+        </div>
+
+        {/* Discreet studio admin access link in Layer B */}
+        <div
+          style={{
+            width: '100%',
+            padding: '3rem 2rem 4rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <button
+            onClick={() => navigate('/admin')}
+            style={{
+              fontFamily: 'var(--font-mono, monospace)',
+              fontSize: '0.7rem',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'rgba(255, 255, 255, 0.85)',
+              cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)',
+            }}
+          >
+            STUDIO CMS ↗
+          </button>
         </div>
       </div>
 

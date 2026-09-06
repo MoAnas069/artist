@@ -48,11 +48,14 @@ export default function Me() {
       {settings.artistPortrait && (
         <section style={{ padding: 'var(--space-xl) var(--space-lg) var(--space-2xl)' }}>
           <div style={{ maxWidth: 600, margin: '0 auto' }}>
-            <img
-              src={settings.artistPortrait}
-              alt={settings.artistName}
-              style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover' }}
-            />
+            <div className="artwork-image-container" style={{ aspectRatio: '3/4', width: '100%' }}>
+              <img
+                src={settings.artistPortrait}
+                alt={settings.artistName}
+                className="artwork-image"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
           </div>
         </section>
       )}

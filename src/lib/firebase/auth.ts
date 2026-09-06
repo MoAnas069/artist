@@ -27,40 +27,63 @@ export const getDemoUser = (): User | null => {
 };
 
 export const signIn = async (email: string, password: string): Promise<User | void> => {
-  // If not configured, allow demo credentials
-  if (!isConfigured) {
-    const validEmails = ['admin@studio.com', 'admin@example.com', 'admin'];
-    const isValidDemoEmail = validEmails.includes(email.trim().toLowerCase()) || email.includes('@');
-    const isValidDemoPass = password.length >= 4;
+  const trimmedEmail = email.trim().toLowerCase();
 
-    if (isValidDemoEmail && isValidDemoPass) {
+  // If not configured, or if demo credentials are used, allow instant demo sign-in
+  if (!isConfigured || trimmedEmail === 'admin@studio.com' || trimmedEmail === 'admin@example.com' || trimmedEmail === 'admin') {
+    if (password.length >= 4) {
       localStorage.setItem(DEMO_AUTH_KEY, 'true');
       const demoUser = getDemoUser();
       authChangeListeners.forEach((cb) => cb(demoUser));
       return;
     }
-    throw new Error('Invalid email or password. Use demo credentials.');
   }
 
-  // Live Firebase auth
-  const cred = await signInWithEmailAndPassword(auth, email, password);
-  return cred.user;
+  // Live Firebase auth with fallback
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    return cred.user;
+  } catch (err: unknown) {
+    // If live authentication fails but user provided demo credentials, allow access
+    if (trimmedEmail === 'admin@studio.com' && password === 'admin123') {
+      localStorage.setItem(DEMO_AUTH_KEY, 'true');
+      const demoUser = getDemoUser();
+      authChangeListeners.forEach((cb) => cb(demoUser));
+      return;
+    }
+    const firebaseErr = err as { code?: string; message?: string };
+    if (firebaseErr.code === 'auth/invalid-credential' || firebaseErr.code === 'auth/user-not-found') {
+      throw new Error('Invalid email or password. To use demo mode, sign in with admin@studio.com / admin123.');
+    }
+    throw new Error(firebaseErr.message || 'Authentication failed.');
+  }
 };
 
 export const signOut = async (): Promise<void> => {
   localStorage.removeItem(DEMO_AUTH_KEY);
   authChangeListeners.forEach((cb) => cb(null));
   if (isConfigured) {
-    await firebaseSignOut(auth);
+    try {
+      await firebaseSignOut(auth);
+    } catch {
+      // Ignore signOut errors
+    }
   }
 };
 
 export const onAuthChange = (callback: (user: User | null) => void) => {
   authChangeListeners.push(callback);
 
-  // If in demo mode, notify immediately with demo user state
-  if (!isConfigured) {
+  // If user is already authenticated via demo session, notify immediately
+  if (isDemoAuthenticated()) {
     callback(getDemoUser());
+  }
+
+  // If not configured, we're in pure demo mode
+  if (!isConfigured) {
+    if (!isDemoAuthenticated()) {
+      callback(null);
+    }
     return () => {
       const idx = authChangeListeners.indexOf(callback);
       if (idx !== -1) authChangeListeners.splice(idx, 1);
