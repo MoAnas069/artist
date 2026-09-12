@@ -45,7 +45,7 @@ export const signIn = async (email: string, password: string): Promise<User | vo
       }
       const firebaseErr = err as { code?: string; message?: string };
       if (firebaseErr.code === 'auth/invalid-credential' || firebaseErr.code === 'auth/user-not-found') {
-        throw new Error('Invalid email or password. Sign in with admin@studio.com / admin123.');
+        throw new Error('Invalid email or password. Please check your credentials.');
       }
       throw new Error(firebaseErr.message || 'Authentication failed.');
     }
