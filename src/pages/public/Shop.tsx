@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 import { getAvailableProducts } from '../../services/productService';
 import type { Product } from '../../types';
 import { formatPrice } from '../../utils/helpers';
-import { usePrefersReducedMotion } from '../../hooks/useMediaQuery';
+import { usePrefersReducedMotion, useIsMobile } from '../../hooks/useMediaQuery';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 import LoadingState from '../../components/ui/LoadingState';
 import EmptyState from '../../components/ui/EmptyState';
 import Footer from '../../components/layout/Footer';
 import BackToHome from '../../components/layout/BackToHome';
+import MobileHeader from '../../components/layout/MobileHeader';
 
 function ScrollReveal({ children }: { children: React.ReactNode; delay?: number }) {
   return <>{children}</>;
@@ -17,6 +19,8 @@ function ScrollReveal({ children }: { children: React.ReactNode; delay?: number 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
+  const { settings } = useSiteSettings();
 
   const loadData = () => {
     getAvailableProducts()
@@ -32,6 +36,131 @@ export default function Shop() {
   }, []);
 
   if (loading) return <LoadingState />;
+
+  if (isMobile) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: 'var(--color-ivory)',
+          color: 'var(--color-charcoal)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+        }}
+      >
+        <MobileHeader />
+
+        <main
+          style={{
+            width: '100%',
+            maxWidth: '460px',
+            padding: '1rem clamp(1.25rem, 5vw, 2.5rem) 4rem',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {products.length === 0 ? (
+            <EmptyState
+              title="No editions available"
+              message="Prints and studio editions will appear here once released."
+            />
+          ) : (
+            products.map((product) => (
+              <div
+                key={product.id}
+                className="gallery-section-unit"
+                style={{ width: '100%' }}
+              >
+                <Link
+                  to={`/shop/${product.slug}`}
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  {/* Contained in Rectangle: Fine Art Print Framing */}
+                  <div
+                    className="gallery-art-rectangle"
+                    style={{ aspectRatio: '1 / 1' }}
+                  >
+                    {product.images?.[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.title}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'var(--color-cream)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <span className="type-meta" style={{ color: 'var(--color-muted)' }}>No image</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Title: Uppercase with Underline */}
+                  <span className="gallery-category-title">
+                    {product.title}
+                  </span>
+
+                  {/* Price & Edition */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.85rem',
+                      color: 'var(--color-stone)',
+                      marginTop: '0.45rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    <span style={{ fontWeight: 600, color: 'var(--color-charcoal)' }}>
+                      {formatPrice(product.price, product.currency)}
+                    </span>
+                    {product.edition && (
+                      <>
+                        <span>•</span>
+                        <span>{product.edition}</span>
+                      </>
+                    )}
+                  </div>
+                </Link>
+              </div>
+            ))
+          )}
+        </main>
+
+        <footer
+          style={{
+            textAlign: 'center',
+            padding: '1.5rem 1.5rem 4rem',
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.8rem',
+            color: 'var(--color-stone)',
+            letterSpacing: '0.05em',
+            marginTop: 'auto',
+          }}
+        >
+          All artwork © {settings.artistName}
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <main>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;500;600;700&family=Alex+Brush&display=swap');
 
 /* ─── CSS Custom Properties ─────────────────────────────── */
 :root {
@@ -15,6 +15,7 @@
   /* Typography */
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-signature: 'Caveat', 'Alex Brush', cursive, serif;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -603,17 +604,80 @@ ul, ol {
   transform: scale(1.038);
 }
 
-/* ─── Mobile Responsiveness Enhancements ────────────────── */
-@media (max-width: 768px) {
-  /* Ensure gallery cards on mobile expand to 100% width cleanly */
-  .work-item-link {
-    align-items: center !important;
-    width: 100% !important;
-  }
-  .work-item-link > div,
-  .work-item-link > h2 {
-    width: 100% !important;
-  }
+/* ─── Owen Gent Inspired Gallery Styles (Mobile & Editorial) ─── */
+.artist-signature-brand {
+  font-family: var(--font-signature);
+  font-size: clamp(2.6rem, 7.5vw, 3.6rem);
+  font-weight: 400;
+  color: var(--color-charcoal);
+  letter-spacing: -0.015em;
+  line-height: 1;
+  text-decoration: none;
+  display: inline-block;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.artist-signature-brand:hover {
+  opacity: 0.82;
+}
+
+/* Framed fine-art gallery rectangle */
+.gallery-art-rectangle {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: var(--color-warm-white);
+  border: 1px solid rgba(26, 26, 26, 0.09);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.gallery-art-rectangle:active {
+  transform: scale(0.985);
+}
+
+.gallery-art-rectangle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Uppercase category label with authentic underline */
+.gallery-category-title {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.8vw, 1.05rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-charcoal);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(26, 26, 26, 0.5);
+  margin: 1.15rem 0 0 0;
+  display: inline-block;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.gallery-category-title:hover {
+  color: #000000;
+  text-decoration-color: #000000;
+}
+
+/* Generous whitespace between sections */
+.gallery-section-unit {
+  margin-bottom: clamp(3.75rem, 8.5vh, 5.75rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 /* On touch devices, disable custom cursor hiding so native touch functions smoothly */
@@ -622,5 +686,6 @@ ul, ol {
     cursor: auto !important;
   }
 }
+
 
 

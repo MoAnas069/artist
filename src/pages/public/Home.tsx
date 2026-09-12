@@ -7,6 +7,7 @@ import Me from './Me';
 import Journal from './Journal';
 import Shop from './Shop';
 import Contact from './Contact';
+import MobileHeader from '../../components/layout/MobileHeader';
 
 export default function Home() {
   const { settings } = useSiteSettings();
@@ -231,6 +232,94 @@ export default function Home() {
       driftAnim: 'kenBurnsDrift2',
     },
   ];
+
+  if (isMobile) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: 'var(--color-ivory)',
+          color: 'var(--color-charcoal)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+          overflowX: 'hidden',
+        }}
+      >
+        {/* Owen Gent Style Signature Header */}
+        <MobileHeader centerLogo={true} />
+
+        {/* Gallery Sections: Contained in Rectangles with Generous Whitespaces */}
+        <main
+          style={{
+            width: '100%',
+            maxWidth: '460px',
+            padding: '1.25rem clamp(1.5rem, 6vw, 2.75rem) 3.5rem',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {homeSections.map((item) => (
+            <div
+              key={item.path}
+              className="gallery-section-unit"
+              onClick={() => navigate(item.path)}
+              style={{ cursor: 'pointer', width: '100%' }}
+            >
+              {/* Contained in Rectangle: Fine Art Gallery Mat & Frame */}
+              <div className="gallery-art-rectangle">
+                <img
+                  src={item.slides[0]}
+                  alt={item.label}
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Category Title: Authentic Owen Gent Uppercase with Underline */}
+              <span className="gallery-category-title">
+                {item.label}
+              </span>
+
+              {/* Subtle Subtitle */}
+              {item.sublabel && (
+                <p
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.82rem',
+                    color: 'var(--color-stone)',
+                    marginTop: '0.45rem',
+                    letterSpacing: '0.015em',
+                    maxWidth: '320px',
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {item.sublabel}
+                </p>
+              )}
+            </div>
+          ))}
+        </main>
+
+        {/* Minimalist Gallery Footer */}
+        <footer
+          style={{
+            textAlign: 'center',
+            padding: '1.5rem 1.5rem 4rem',
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.8rem',
+            color: 'var(--color-stone)',
+            letterSpacing: '0.05em',
+            marginTop: 'auto',
+          }}
+        >
+          All artwork © {settings.artistName}
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div

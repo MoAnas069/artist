@@ -25,14 +25,18 @@ export default function ArtworksCMS() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
+    const targetId = deleteTarget.id;
+    setDeleteTarget(null);
+    setArtworks((prev) => prev.filter((a) => a.id !== targetId));
     try {
-      await deleteArtwork(deleteTarget.id);
+      await deleteArtwork(targetId);
       showToast('Artwork deleted');
       loadArtworks();
-    } catch {
+    } catch (e) {
+      console.error(e);
       showToast('Failed to delete artwork', 'error');
+      loadArtworks();
     }
-    setDeleteTarget(null);
   };
 
   const togglePublish = async (artwork: Artwork) => {

@@ -3,7 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -49,7 +49,7 @@ export const getPublishedPosts = async (): Promise<JournalPost[]> => {
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as JournalPost));
+        return snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as JournalPost));
       }
     } catch (e) {
       console.warn('Firestore getPublishedPosts failed, using local:', e);
@@ -63,8 +63,10 @@ export const getAllPosts = async (): Promise<JournalPost[]> => {
     try {
       const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as JournalPost));
+      const items = snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as JournalPost));
+      if (items.length > 0) {
+        saveLocalPosts(items);
+        return items;
       }
     } catch (e) {
       console.warn('Firestore getAllPosts failed, using local:', e);
@@ -80,7 +82,7 @@ export const getPostBySlug = async (slug: string): Promise<JournalPost | null> =
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const d = snapshot.docs[0];
-        return { id: d.id, ...d.data() } as JournalPost;
+        return { ...d.data(), id: d.id } as JournalPost;
       }
     } catch (e) {
       console.warn('Firestore getPostBySlug failed, using local:', e);
@@ -96,7 +98,7 @@ export const getPostById = async (id: string): Promise<JournalPost | null> => {
       const docRef = doc(db, COLLECTION, id);
       const snapshot = await getDoc(docRef);
       if (snapshot.exists()) {
-        return { id: snapshot.id, ...snapshot.data() } as JournalPost;
+        return { ...snapshot.data(), id: snapshot.id } as JournalPost;
       }
     } catch (e) {
       console.warn('Firestore getPostById failed, using local:', e);
@@ -112,7 +114,9 @@ export const getRecentPosts = async (count: number = 3): Promise<JournalPost[]> 
 };
 
 export const createPost = async (data: JournalPostFormData): Promise<string> => {
-  const newId = 'post-' + Date.now();
+  const docRef = isConfigured ? doc(collection(db, COLLECTION)) : null;
+  const newId = docRef ? docRef.id : ('post-' + Date.now());
+
   const newPost: JournalPost = {
     ...data,
     id: newId,
@@ -124,16 +128,17 @@ export const createPost = async (data: JournalPostFormData): Promise<string> => 
   list.unshift(newPost);
   saveLocalPosts(list);
 
-  if (isConfigured) {
+  if (isConfigured && docRef) {
     try {
-      const docRef = await addDoc(collection(db, COLLECTION), {
+      await setDoc(docRef, {
         ...data,
+        id: newId,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      return docRef.id;
+      return newId;
     } catch (e) {
-      console.warn('Firestore createPost failed, saved locally:', e);
+      console.error('Firestore createPost failed, saved locally:', e);
     }
   }
 
@@ -160,7 +165,7 @@ export const updatePost = async (id: string, data: Partial<JournalPostFormData>)
         updatedAt: serverTimestamp(),
       });
     } catch (e) {
-      console.warn('Firestore updatePost failed, saved locally:', e);
+      console.error('Firestore updatePost failed, saved locally:', e);
     }
   }
 };
@@ -173,7 +178,8 @@ export const deletePost = async (id: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, COLLECTION, id));
     } catch (e) {
-      console.warn('Firestore deletePost failed, removed locally:', e);
+      console.error('Firestore deletePost failed, removed locally:', e);
+      throw e;
     }
   }
 };

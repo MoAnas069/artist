@@ -3,7 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -49,7 +49,7 @@ export const getAvailableProducts = async (): Promise<Product[]> => {
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
+        return snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as Product));
       }
     } catch (e) {
       console.warn('Firestore getAvailableProducts failed, using local:', e);
@@ -63,8 +63,10 @@ export const getAllProducts = async (): Promise<Product[]> => {
     try {
       const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
+      const items = snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as Product));
+      if (items.length > 0) {
+        saveLocalProducts(items);
+        return items;
       }
     } catch (e) {
       console.warn('Firestore getAllProducts failed, using local:', e);
@@ -84,7 +86,7 @@ export const getFeaturedProducts = async (): Promise<Product[]> => {
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
+        return snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as Product));
       }
     } catch (e) {
       console.warn('Firestore getFeaturedProducts failed, using local:', e);
@@ -100,7 +102,7 @@ export const getProductBySlug = async (slug: string): Promise<Product | null> =>
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const d = snapshot.docs[0];
-        return { id: d.id, ...d.data() } as Product;
+        return { ...d.data(), id: d.id } as Product;
       }
     } catch (e) {
       console.warn('Firestore getProductBySlug failed, using local:', e);
@@ -116,7 +118,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
       const docRef = doc(db, COLLECTION, id);
       const snapshot = await getDoc(docRef);
       if (snapshot.exists()) {
-        return { id: snapshot.id, ...snapshot.data() } as Product;
+        return { ...snapshot.data(), id: snapshot.id } as Product;
       }
     } catch (e) {
       console.warn('Firestore getProductById failed, using local:', e);
@@ -127,7 +129,9 @@ export const getProductById = async (id: string): Promise<Product | null> => {
 };
 
 export const createProduct = async (data: ProductFormData): Promise<string> => {
-  const newId = 'prod-' + Date.now();
+  const docRef = isConfigured ? doc(collection(db, COLLECTION)) : null;
+  const newId = docRef ? docRef.id : ('prod-' + Date.now());
+
   const newProduct: Product = {
     ...data,
     id: newId,
@@ -139,16 +143,17 @@ export const createProduct = async (data: ProductFormData): Promise<string> => {
   list.unshift(newProduct);
   saveLocalProducts(list);
 
-  if (isConfigured) {
+  if (isConfigured && docRef) {
     try {
-      const docRef = await addDoc(collection(db, COLLECTION), {
+      await setDoc(docRef, {
         ...data,
+        id: newId,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      return docRef.id;
+      return newId;
     } catch (e) {
-      console.warn('Firestore createProduct failed, saved locally:', e);
+      console.error('Firestore createProduct failed, saved locally:', e);
     }
   }
 
@@ -175,7 +180,7 @@ export const updateProduct = async (id: string, data: Partial<ProductFormData>):
         updatedAt: serverTimestamp(),
       });
     } catch (e) {
-      console.warn('Firestore updateProduct failed, saved locally:', e);
+      console.error('Firestore updateProduct failed, saved locally:', e);
     }
   }
 };
@@ -188,7 +193,8 @@ export const deleteProduct = async (id: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, COLLECTION, id));
     } catch (e) {
-      console.warn('Firestore deleteProduct failed, removed locally:', e);
+      console.error('Firestore deleteProduct failed, removed locally:', e);
+      throw e;
     }
   }
 };

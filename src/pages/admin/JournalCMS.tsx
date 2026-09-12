@@ -23,14 +23,18 @@ export default function JournalCMS() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
+    const targetId = deleteTarget.id;
+    setDeleteTarget(null);
+    setPosts((prev) => prev.filter((p) => p.id !== targetId));
     try {
-      await deletePost(deleteTarget.id);
+      await deletePost(targetId);
       showToast('Post deleted');
       loadPosts();
-    } catch {
+    } catch (e) {
+      console.error(e);
       showToast('Failed to delete post', 'error');
+      loadPosts();
     }
-    setDeleteTarget(null);
   };
 
   const togglePublish = async (post: JournalPost) => {

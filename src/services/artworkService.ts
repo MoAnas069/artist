@@ -3,7 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -50,7 +50,7 @@ export const getPublishedArtworks = async (): Promise<Artwork[]> => {
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Artwork));
+        return snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as Artwork));
       }
     } catch (e) {
       console.warn('Firestore getPublishedArtworks failed, using local:', e);
@@ -66,8 +66,10 @@ export const getAllArtworks = async (): Promise<Artwork[]> => {
     try {
       const q = query(collection(db, COLLECTION), orderBy('sortOrder', 'asc'));
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Artwork));
+      const items = snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as Artwork));
+      if (items.length > 0) {
+        saveLocalArtworks(items);
+        return items;
       }
     } catch (e) {
       console.warn('Firestore getAllArtworks failed, using local:', e);
@@ -87,7 +89,7 @@ export const getFeaturedArtworks = async (): Promise<Artwork[]> => {
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Artwork));
+        return snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as Artwork));
       }
     } catch (e) {
       console.warn('Firestore getFeaturedArtworks failed, using local:', e);
@@ -105,7 +107,7 @@ export const getArtworkBySlug = async (slug: string): Promise<Artwork | null> =>
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const d = snapshot.docs[0];
-        return { id: d.id, ...d.data() } as Artwork;
+        return { ...d.data(), id: d.id } as Artwork;
       }
     } catch (e) {
       console.warn('Firestore getArtworkBySlug failed, using local:', e);
@@ -121,7 +123,7 @@ export const getArtworkById = async (id: string): Promise<Artwork | null> => {
       const docRef = doc(db, COLLECTION, id);
       const snapshot = await getDoc(docRef);
       if (snapshot.exists()) {
-        return { id: snapshot.id, ...snapshot.data() } as Artwork;
+        return { ...snapshot.data(), id: snapshot.id } as Artwork;
       }
     } catch (e) {
       console.warn('Firestore getArtworkById failed, using local:', e);
@@ -132,7 +134,10 @@ export const getArtworkById = async (id: string): Promise<Artwork | null> => {
 };
 
 export const createArtwork = async (data: ArtworkFormData): Promise<string> => {
-  const newId = 'art-' + Date.now();
+  // Generate consistent ID for both Firestore and local storage
+  const docRef = isConfigured ? doc(collection(db, COLLECTION)) : null;
+  const newId = docRef ? docRef.id : ('art-' + Date.now());
+
   const newArtwork: Artwork = {
     ...data,
     id: newId,
@@ -142,19 +147,26 @@ export const createArtwork = async (data: ArtworkFormData): Promise<string> => {
   };
 
   const list = getLocalArtworks();
-  list.unshift(newArtwork);
+  const existingIdx = list.findIndex((a) => a.id === newId);
+  if (existingIdx !== -1) {
+    list[existingIdx] = newArtwork;
+  } else {
+    list.unshift(newArtwork);
+  }
   saveLocalArtworks(list);
 
-  if (isConfigured) {
+  if (isConfigured && docRef) {
     try {
-      const docRef = await addDoc(collection(db, COLLECTION), {
+      await setDoc(docRef, {
         ...data,
+        id: newId,
+        coverImage: newArtwork.coverImage,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      return docRef.id;
+      return newId;
     } catch (e) {
-      console.warn('Firestore createArtwork failed, saved locally:', e);
+      console.error('Firestore createArtwork failed, saved locally:', e);
     }
   }
 
@@ -182,20 +194,23 @@ export const updateArtwork = async (id: string, data: Partial<ArtworkFormData>):
         updatedAt: serverTimestamp(),
       });
     } catch (e) {
-      console.warn('Firestore updateArtwork failed, saved locally:', e);
+      console.error('Firestore updateArtwork failed, saved locally:', e);
     }
   }
 };
 
 export const deleteArtwork = async (id: string): Promise<void> => {
+  // Remove from local cache immediately
   const list = getLocalArtworks().filter((a) => a.id !== id);
   saveLocalArtworks(list);
 
+  // Remove from Firestore
   if (isConfigured) {
     try {
       await deleteDoc(doc(db, COLLECTION, id));
     } catch (e) {
-      console.warn('Firestore deleteArtwork failed, removed locally:', e);
+      console.error('Firestore deleteArtwork failed:', e);
+      throw e;
     }
   }
 };

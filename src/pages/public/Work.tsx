@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 import { getPublishedArtworks } from '../../services/artworkService';
 import type { Artwork } from '../../types';
 import { padNumber } from '../../utils/helpers';
-import { usePrefersReducedMotion } from '../../hooks/useMediaQuery';
+import { usePrefersReducedMotion, useIsMobile } from '../../hooks/useMediaQuery';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 import LoadingState from '../../components/ui/LoadingState';
 import EmptyState from '../../components/ui/EmptyState';
 import Footer from '../../components/layout/Footer';
 import BackToHome from '../../components/layout/BackToHome';
+import MobileHeader from '../../components/layout/MobileHeader';
 
 function ScrollReveal({ children }: { children: React.ReactNode; delay?: number }) {
   return <>{children}</>;
@@ -31,7 +33,125 @@ export default function Work() {
     return () => window.removeEventListener('studio_artworks_updated', loadData);
   }, []);
 
+  const isMobile = useIsMobile();
+  const { settings } = useSiteSettings();
+
   if (loading) return <LoadingState />;
+
+  if (isMobile) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: 'var(--color-ivory)',
+          color: 'var(--color-charcoal)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+        }}
+      >
+        <MobileHeader />
+
+        <main
+          style={{
+            width: '100%',
+            maxWidth: '460px',
+            padding: '1rem clamp(1.25rem, 5vw, 2.5rem) 4rem',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {artworks.length === 0 ? (
+            <EmptyState
+              title="No artwork yet"
+              message="Published artwork will appear here."
+            />
+          ) : (
+            artworks.map((artwork) => (
+              <div
+                key={artwork.id}
+                className="gallery-section-unit"
+                style={{ width: '100%' }}
+              >
+                <Link
+                  to={`/work/${artwork.slug}`}
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  {/* Contained in Rectangle: Crisp Art Gallery Frame */}
+                  <div
+                    className="gallery-art-rectangle"
+                    style={{ aspectRatio: '4/5' }}
+                  >
+                    {artwork.coverImage ? (
+                      <img
+                        src={artwork.coverImage}
+                        alt={artwork.title}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: 'var(--color-cream)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <span className="type-meta" style={{ color: 'var(--color-muted)' }}>No image</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Artwork Title: Uppercase with Underline */}
+                  <span className="gallery-category-title">
+                    {artwork.title}
+                  </span>
+
+                  {/* Subtle Metadata */}
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.8rem',
+                      color: 'var(--color-stone)',
+                      marginTop: '0.4rem',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {artwork.category} — {artwork.year}
+                  </span>
+                </Link>
+              </div>
+            ))
+          )}
+        </main>
+
+        <footer
+          style={{
+            textAlign: 'center',
+            padding: '1.5rem 1.5rem 4rem',
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.8rem',
+            color: 'var(--color-stone)',
+            letterSpacing: '0.05em',
+            marginTop: 'auto',
+          }}
+        >
+          All artwork © {settings.artistName}
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <main>

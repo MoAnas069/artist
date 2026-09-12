@@ -3,12 +3,15 @@ import { motion } from 'framer-motion';
 import { createMessage } from '../../services/messageService';
 import { uploadFiles } from '../../services/storageService';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useIsMobile } from '../../hooks/useMediaQuery';
 import type { ContactMessageFormData } from '../../types';
 import Footer from '../../components/layout/Footer';
 import BackToHome from '../../components/layout/BackToHome';
+import MobileHeader from '../../components/layout/MobileHeader';
 
 export default function Contact() {
   const { settings } = useSiteSettings();
+  const isMobile = useIsMobile();
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [form, setForm] = useState<ContactMessageFormData>({
     name: '',
@@ -105,7 +108,7 @@ export default function Contact() {
 
   return (
     <main>
-      <BackToHome />
+      {isMobile ? <MobileHeader /> : <BackToHome />}
       {/* Header */}
       <section
         style={{

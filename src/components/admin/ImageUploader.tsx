@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
-import { Upload, X, GripVertical, Link as LinkIcon, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, X, GripVertical, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { uploadFile } from '../../services/storageService';
 import { useToast } from '../ui/Toast';
 
 interface ImageUploaderProps {
-  images: string[];
+  images?: string[];
   onChange: (images: string[]) => void;
   folder: string;
   maxFiles?: number;
@@ -17,7 +17,7 @@ const SAMPLE_PRESETS = [
   { name: 'Misty Shore', url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80' },
 ];
 
-export default function ImageUploader({ images, onChange, folder, maxFiles = 20 }: ImageUploaderProps) {
+export default function ImageUploader({ images = [], onChange, folder, maxFiles = 20 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<Record<string, number>>({});
   const [dragOver, setDragOver] = useState(false);
@@ -102,7 +102,8 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
   };
 
   const handleRemove = (index: number) => {
-    onChange(images.filter((_, i) => i !== index));
+    const updated = images.filter((_, i) => i !== index);
+    onChange(updated);
   };
 
   const handleReorder = (fromIndex: number, toIndex: number) => {
@@ -133,8 +134,8 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
       >
         {uploading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Loader2 size={24} className="animate-spin" color="#6366f1" style={{ marginBottom: '0.5rem', animation: 'spin 1s linear infinite' }} />
-            <p style={{ fontSize: '0.875rem', color: '#4f46e5', fontWeight: 500 }}>Processing image...</p>
+            <Loader2 size={24} color="#6366f1" style={{ marginBottom: '0.5rem', animation: 'spin 1s linear infinite' }} />
+            <p style={{ fontSize: '0.875rem', color: '#4f46e5', fontWeight: 500 }}>Optimizing & uploading image...</p>
           </div>
         ) : (
           <>
@@ -152,7 +153,12 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
           type="file"
           multiple={maxFiles > 1}
           accept="image/*"
-          onChange={(e) => e.target.files && handleUpload(e.target.files)}
+          onChange={(e) => {
+            if (e.target.files && e.target.files.length > 0) {
+              handleUpload(e.target.files);
+              e.target.value = ''; // Reset so the exact same file can be uploaded again if deleted
+            }
+          }}
           style={{ display: 'none' }}
         />
       </div>
@@ -257,8 +263,8 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
         >
           {images.map((img, i) => (
             <div
-              key={img + i}
-              draggable
+              key={`uploader-img-${i}-${img.slice(0, 24)}`}
+              draggable={images.length > 1}
               onDragStart={() => setDragIndex(i)}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => {
@@ -274,7 +280,7 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
                 overflow: 'hidden',
                 backgroundColor: '#f3f4f6',
                 border: i === 0 ? '2px solid #1a1a1a' : '1px solid #e5e7eb',
-                cursor: 'grab',
+                cursor: images.length > 1 ? 'grab' : 'default',
               }}
             >
               <img
@@ -282,7 +288,6 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
                 alt=""
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => {
-                  // Fallback for broken image link
                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop&q=80';
                 }}
               />
@@ -302,6 +307,7 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
                     color: 'white',
                     padding: '1px 6px',
                     borderRadius: 3,
+                    zIndex: 2,
                   }}
                 >
                   Cover
@@ -309,46 +315,55 @@ export default function ImageUploader({ images, onChange, folder, maxFiles = 20 
               )}
 
               {/* Drag Handle */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 4,
-                  left: 4,
-                  color: 'white',
-                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
-                  cursor: 'grab',
-                }}
-              >
-                <GripVertical size={14} />
-              </div>
+              {images.length > 1 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 4,
+                    left: 4,
+                    color: 'white',
+                    filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
+                    cursor: 'grab',
+                    zIndex: 2,
+                  }}
+                >
+                  <GripVertical size={14} />
+                </div>
+              )}
 
               {/* Remove Button */}
               <button
                 type="button"
+                draggable={false}
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   handleRemove(i);
                 }}
+                title="Remove image"
                 style={{
                   position: 'absolute',
-                  top: 4,
-                  right: 4,
-                  width: 22,
-                  height: 22,
+                  top: 5,
+                  right: 5,
+                  width: 24,
+                  height: 24,
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(0,0,0,0.7)',
+                  backgroundColor: 'rgba(0,0,0,0.75)',
                   color: 'white',
-                  border: 'none',
+                  border: '1px solid rgba(255,255,255,0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  transition: 'background-color 150ms ease',
+                  zIndex: 10,
+                  transition: 'background-color 150ms ease, transform 100ms ease',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#dc2626')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.7)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.75)')}
               >
-                <X size={12} />
+                <X size={13} />
               </button>
             </div>
           ))}

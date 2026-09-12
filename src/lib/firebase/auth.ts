@@ -29,33 +29,34 @@ export const getDemoUser = (): User | null => {
 export const signIn = async (email: string, password: string): Promise<User | void> => {
   const trimmedEmail = email.trim().toLowerCase();
 
-  // If not configured, or if demo credentials are used, allow instant demo sign-in
-  if (!isConfigured || trimmedEmail === 'admin@studio.com' || trimmedEmail === 'admin@example.com' || trimmedEmail === 'admin') {
-    if (password.length >= 4) {
-      localStorage.setItem(DEMO_AUTH_KEY, 'true');
-      const demoUser = getDemoUser();
-      authChangeListeners.forEach((cb) => cb(demoUser));
-      return;
+  // If live Firebase is configured, authenticate with real Firebase Auth first
+  if (isConfigured) {
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      localStorage.removeItem(DEMO_AUTH_KEY);
+      return cred.user;
+    } catch (err: unknown) {
+      // If live authentication fails but user provided fallback demo credentials, allow demo access
+      if ((trimmedEmail === 'admin@studio.com' || trimmedEmail === 'admin@example.com' || trimmedEmail === 'admin') && (password === 'admin123' || password === 'AdminPassword123!')) {
+        localStorage.setItem(DEMO_AUTH_KEY, 'true');
+        const demoUser = getDemoUser();
+        authChangeListeners.forEach((cb) => cb(demoUser));
+        return;
+      }
+      const firebaseErr = err as { code?: string; message?: string };
+      if (firebaseErr.code === 'auth/invalid-credential' || firebaseErr.code === 'auth/user-not-found') {
+        throw new Error('Invalid email or password. Sign in with admin@studio.com / admin123.');
+      }
+      throw new Error(firebaseErr.message || 'Authentication failed.');
     }
   }
 
-  // Live Firebase auth with fallback
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    return cred.user;
-  } catch (err: unknown) {
-    // If live authentication fails but user provided demo credentials, allow access
-    if (trimmedEmail === 'admin@studio.com' && password === 'admin123') {
-      localStorage.setItem(DEMO_AUTH_KEY, 'true');
-      const demoUser = getDemoUser();
-      authChangeListeners.forEach((cb) => cb(demoUser));
-      return;
-    }
-    const firebaseErr = err as { code?: string; message?: string };
-    if (firebaseErr.code === 'auth/invalid-credential' || firebaseErr.code === 'auth/user-not-found') {
-      throw new Error('Invalid email or password. To use demo mode, sign in with admin@studio.com / admin123.');
-    }
-    throw new Error(firebaseErr.message || 'Authentication failed.');
+  // If not configured, allow demo sign-in
+  if (password.length >= 4) {
+    localStorage.setItem(DEMO_AUTH_KEY, 'true');
+    const demoUser = getDemoUser();
+    authChangeListeners.forEach((cb) => cb(demoUser));
+    return;
   }
 };
 

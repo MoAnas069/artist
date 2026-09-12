@@ -2,12 +2,12 @@ import {
   collection,
   doc,
   getDocs,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
-  orderBy,
   where,
+  orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
 import { db, isConfigured } from '../lib/firebase/config';
@@ -41,8 +41,10 @@ export const getMessages = async (): Promise<ContactMessage[]> => {
     try {
       const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ContactMessage));
+      const items = snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as ContactMessage));
+      if (items.length > 0) {
+        saveLocalMessages(items);
+        return items;
       }
     } catch (e) {
       console.warn('Firestore getMessages failed, using local:', e);
@@ -61,7 +63,7 @@ export const getUnreadMessages = async (): Promise<ContactMessage[]> => {
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ContactMessage));
+        return snapshot.docs.map((d) => ({ ...d.data(), id: d.id } as ContactMessage));
       }
     } catch (e) {
       console.warn('Firestore getUnreadMessages failed, using local:', e);
@@ -71,7 +73,9 @@ export const getUnreadMessages = async (): Promise<ContactMessage[]> => {
 };
 
 export const createMessage = async (data: ContactMessageFormData): Promise<string> => {
-  const newId = 'msg-' + Date.now();
+  const docRef = isConfigured ? doc(collection(db, COLLECTION)) : null;
+  const newId = docRef ? docRef.id : ('msg-' + Date.now());
+
   const newMsg: ContactMessage = {
     ...data,
     id: newId,
@@ -86,16 +90,17 @@ export const createMessage = async (data: ContactMessageFormData): Promise<strin
     window.dispatchEvent(new CustomEvent('studio_messages_updated'));
   }
 
-  if (isConfigured) {
+  if (isConfigured && docRef) {
     try {
-      const docRef = await addDoc(collection(db, COLLECTION), {
+      await setDoc(docRef, {
         ...data,
+        id: newId,
         status: 'unread' as MessageStatus,
         createdAt: serverTimestamp(),
       });
-      return docRef.id;
+      return newId;
     } catch (e) {
-      console.warn('Firestore createMessage failed, saved locally:', e);
+      console.error('Firestore createMessage failed, saved locally:', e);
     }
   }
 
@@ -118,7 +123,7 @@ export const updateMessageStatus = async (id: string, status: MessageStatus): Pr
       const docRef = doc(db, COLLECTION, id);
       await updateDoc(docRef, { status });
     } catch (e) {
-      console.warn('Firestore updateMessageStatus failed, saved locally:', e);
+      console.error('Firestore updateMessageStatus failed, saved locally:', e);
     }
   }
 };
@@ -134,7 +139,8 @@ export const deleteMessage = async (id: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, COLLECTION, id));
     } catch (e) {
-      console.warn('Firestore deleteMessage failed, removed locally:', e);
+      console.error('Firestore deleteMessage failed, removed locally:', e);
+      throw e;
     }
   }
 };

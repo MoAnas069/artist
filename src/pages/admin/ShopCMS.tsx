@@ -23,14 +23,18 @@ export default function ShopCMS() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
+    const targetId = deleteTarget.id;
+    setDeleteTarget(null);
+    setProducts((prev) => prev.filter((p) => p.id !== targetId));
     try {
-      await deleteProduct(deleteTarget.id);
+      await deleteProduct(targetId);
       showToast('Product deleted');
       loadProducts();
-    } catch {
+    } catch (e) {
+      console.error(e);
       showToast('Failed to delete product', 'error');
+      loadProducts();
     }
-    setDeleteTarget(null);
   };
 
   const toggleAvailable = async (product: Product) => {
