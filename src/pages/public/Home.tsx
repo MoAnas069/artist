@@ -250,12 +250,12 @@ export default function Home() {
         {/* Owen Gent Style Signature Header */}
         <MobileHeader centerLogo={true} />
 
-        {/* Gallery Sections: Contained in Rectangles with Generous Whitespaces */}
+        {/* Gallery Sections: Contained in Rectangles with Refined Whitespaces */}
         <main
           style={{
             width: '100%',
-            maxWidth: '460px',
-            padding: '1.25rem clamp(1.5rem, 6vw, 2.75rem) 3.5rem',
+            maxWidth: '380px',
+            padding: '0.75rem 1.25rem 3rem',
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
@@ -282,23 +282,6 @@ export default function Home() {
               <span className="gallery-category-title">
                 {item.label}
               </span>
-
-              {/* Subtle Subtitle */}
-              {item.sublabel && (
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.82rem',
-                    color: 'var(--color-stone)',
-                    marginTop: '0.45rem',
-                    letterSpacing: '0.015em',
-                    maxWidth: '320px',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {item.sublabel}
-                </p>
-              )}
             </div>
           ))}
         </main>
@@ -427,22 +410,6 @@ export default function Home() {
                   {item.label}
                 </h2>
 
-                <p
-                  style={{
-                    position: 'relative',
-                    zIndex: 1,
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
-                    fontWeight: 400,
-                    color: 'var(--color-stone)',
-                    margin: '0.75rem 0 0 0',
-                    letterSpacing: '0.01em',
-                    maxWidth: 550,
-                  }}
-                >
-                  {item.sublabel}
-                </p>
-
                 {/* Mobile Scroll-Driven Transformation: Circular aperture expands as you scroll to each section */}
                 {isMobile && (
                   <div
@@ -532,23 +499,6 @@ export default function Home() {
                     >
                       {item.label}
                     </h2>
-
-                    <p
-                      style={{
-                        position: 'relative',
-                        zIndex: 3,
-                        fontFamily: 'var(--font-body)',
-                        fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
-                        fontWeight: 400,
-                        color: 'rgba(255, 255, 255, 0.92)',
-                        margin: '0.75rem 0 0 0',
-                        letterSpacing: '0.01em',
-                        maxWidth: 550,
-                        textShadow: '0 2px 14px rgba(0, 0, 0, 0.85)',
-                      }}
-                    >
-                      {item.sublabel}
-                    </p>
                   </div>
                 )}
               </div>
