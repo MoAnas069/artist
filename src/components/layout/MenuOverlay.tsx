@@ -60,9 +60,9 @@ export default function MenuOverlay({ onClose }: MenuOverlayProps) {
     },
     {
       number: '05',
-      label: 'Contact',
-      sublabel: 'Commissions, Gallery Inquiries & Press',
-      category: 'Correspondence & Inquiry',
+      label: 'Start Your Project',
+      sublabel: 'Commissions, Inquiries & Projects',
+      category: 'Inquiry & Commissions',
       path: '/contact',
       // Architectural letterpress, postal stationery, and dark studio desk
       image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1920&auto=format&fit=crop&q=85',

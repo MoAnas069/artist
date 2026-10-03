@@ -14,6 +14,14 @@ export const getSettings = async (): Promise<SiteSettings> => {
     const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (cached) {
       const parsed = JSON.parse(cached);
+      if (parsed.artistName === 'Rowan Vance') {
+        parsed.artistName = defaultSettings.artistName;
+        parsed.seoTitle = defaultSettings.seoTitle;
+        parsed.seoDescription = defaultSettings.seoDescription;
+        parsed.copyrightText = defaultSettings.copyrightText;
+        parsed.email = defaultSettings.email;
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ ...defaultSettings, ...parsed }));
+      }
       // If configured, try to fetch fresh from Firestore in background
       if (isConfigured) {
         try {

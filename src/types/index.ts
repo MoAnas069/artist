@@ -124,6 +124,9 @@ export interface SiteSettings {
   shopXrayImage?: string;
   contactSublabel?: string;
   contactXrayImage?: string;
+  artistFont?: string;
+  artistLogoDark?: string;
+  artistLogoLight?: string;
 }
 
 export interface AboutSection {

@@ -6,7 +6,13 @@ export function useSiteSettings() {
   const [settings, setSettings] = useState<SiteSettings>(() => {
     try {
       const cached = localStorage.getItem('studio_site_settings');
-      if (cached) return { ...defaultSettings, ...JSON.parse(cached) };
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.artistName === 'Rowan Vance') {
+          return { ...defaultSettings, ...parsed, artistName: defaultSettings.artistName };
+        }
+        return { ...defaultSettings, ...parsed };
+      }
     } catch {}
     return defaultSettings;
   });

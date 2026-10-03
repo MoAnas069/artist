@@ -1,21 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;500;600;700&family=Alex+Brush&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Italiana&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=Pinyon+Script&family=Alex+Brush&display=swap');
 
 /* ─── CSS Custom Properties ─────────────────────────────── */
 :root {
   /* Colors */
   --color-ivory: #F5F0EB;
   --color-cream: #EDE8E1;
-  --color-charcoal: #1A1A1A;
-  --color-stone: #6B6560;
-  --color-muted: #A39E98;
+  --color-charcoal: #141416;
+  --color-stone: #5E5852;
+  --color-muted: #8F8982;
   --color-warm-white: #FAF8F5;
   --color-border: #D8D3CD;
-  --color-overlay: rgba(26, 26, 26, 0.95);
+  --color-overlay: rgba(18, 18, 20, 0.96);
 
-  /* Typography */
-  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-signature: 'Caveat', 'Alex Brush', cursive, serif;
+  /* Typography Tokens */
+  --font-display: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
+  --font-editorial: 'Cormorant Garamond', Georgia, serif;
+  --font-reading: 'Newsreader', 'Cormorant Garamond', Georgia, serif;
+  --font-sculptural: 'Italiana', 'Cinzel', serif;
+  --font-modern: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', 'DM Mono', monospace;
+  --font-signature: 'Pinyon Script', 'Alex Brush', cursive;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -72,7 +77,8 @@ body {
   font-weight: 400;
   color: var(--color-charcoal);
   background-color: var(--color-ivory);
-  line-height: 1.6;
+  line-height: 1.68;
+  letter-spacing: -0.01em;
   overflow-x: hidden;
 }
 
@@ -125,75 +131,92 @@ ul, ol {
 
 /* ─── Typography Classes ────────────────────────────────── */
 
-/* Display — Large serif for artistic statements */
+/* Display — Poetic, High-Contrast Serif for Artistic Titles */
 .type-display-xl {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 8vw, 8rem);
+  font-size: clamp(3.2rem, 8.5vw, 8.5rem);
   font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  font-feature-settings: "liga" 1, "dlig" 1;
 }
 
 .type-display-lg {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(2.6rem, 6.2vw, 5.2rem);
   font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-feature-settings: "liga" 1, "dlig" 1;
 }
 
 .type-display-md {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-size: clamp(1.85rem, 4.2vw, 3.2rem);
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  font-feature-settings: "liga" 1;
 }
 
 .type-display-sm {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-size: clamp(1.35rem, 2.8vw, 1.85rem);
   font-weight: 400;
-  line-height: 1.25;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
 }
 
-/* Body — Clean sans-serif */
+/* Editorial Literary Prose / Statement */
+.type-editorial {
+  font-family: var(--font-reading);
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: -0.005em;
+}
+
+/* Body — Refined Modern Editorial Sans */
 .type-body-lg {
   font-family: var(--font-body);
   font-size: 1.125rem;
-  font-weight: 300;
+  font-weight: 350;
   line-height: 1.8;
+  letter-spacing: -0.01em;
 }
 
 .type-body {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.975rem;
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.72;
+  letter-spacing: -0.005em;
 }
 
 .type-body-sm {
   font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.62;
+  letter-spacing: 0;
 }
 
-/* Meta — Small uppercase labels */
+/* Meta — Archival Monospace Gallery Labels */
 .type-meta {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 450;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   line-height: 1.4;
 }
 
 .type-meta-sm {
-  font-family: var(--font-body);
-  font-size: 0.6875rem;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 450;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   line-height: 1.4;
 }
 
@@ -276,30 +299,32 @@ ul, ol {
 
 /* ─── Rich Text Content ─────────────────────────────────── */
 .rich-text {
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.85;
+  font-family: var(--font-reading);
+  font-size: 1.15rem;
+  line-height: 1.88;
   color: var(--color-charcoal);
+  letter-spacing: -0.005em;
 }
 
 .rich-text h2 {
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 400;
   margin: 2.5em 0 0.75em;
-  line-height: 1.2;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
 }
 
 .rich-text h3 {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.45rem;
   font-weight: 500;
   margin: 2em 0 0.5em;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .rich-text p {
-  margin-bottom: 1.5em;
+  margin-bottom: 1.65em;
 }
 
 .rich-text a {
@@ -313,14 +338,14 @@ ul, ol {
 }
 
 .rich-text blockquote {
-  border-left: 2px solid var(--color-muted);
+  border-left: 2px solid var(--color-charcoal);
   padding-left: var(--space-lg);
-  margin: 2em 0;
+  margin: 2.2em 0;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: var(--color-stone);
+  font-size: 1.35rem;
+  line-height: 1.55;
+  color: var(--color-charcoal);
 }
 
 .rich-text img {
@@ -604,22 +629,70 @@ ul, ol {
   transform: scale(1.038);
 }
 
-/* ─── Owen Gent Inspired Gallery Styles (Mobile & Editorial) ─── */
+/* ─── Artistic Font Families for Artist Brand / Signature ─── */
 .artist-signature-brand {
   font-family: var(--font-signature);
-  font-size: clamp(2.6rem, 7.5vw, 3.6rem);
+  font-size: clamp(2.4rem, 7.2vw, 3.6rem);
   font-weight: 400;
   color: var(--color-charcoal);
-  letter-spacing: -0.015em;
-  line-height: 1;
+  line-height: 1.1;
   text-decoration: none;
   display: inline-block;
   user-select: none;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .artist-signature-brand:hover {
-  opacity: 0.82;
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.hero-artist-name {
+  color: var(--color-charcoal);
+  user-select: none;
+}
+
+.hero-artist-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-artist-container:hover {
+  transform: scale(1.012);
+}
+
+.artist-font-pinyon {
+  font-family: 'Pinyon Script', cursive !important;
+  font-style: normal !important;
+  letter-spacing: 0.01em !important;
+}
+
+.artist-font-cormorant {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-style: italic !important;
+  letter-spacing: -0.01em !important;
+}
+
+.artist-font-mrs-saint {
+  font-family: 'Mrs Saint Delafield', cursive !important;
+  font-style: normal !important;
+  letter-spacing: 0.02em !important;
+}
+
+.artist-font-italiana {
+  font-family: 'Italiana', Georgia, serif !important;
+  font-style: normal !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.artist-font-alex-brush {
+  font-family: 'Alex Brush', cursive !important;
+  font-style: normal !important;
+  letter-spacing: 0.01em !important;
 }
 
 /* Framed fine-art gallery rectangle */
@@ -648,18 +721,18 @@ ul, ol {
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Uppercase category label with authentic underline */
+/* Uppercase category label with authentic archival underline */
 .gallery-category-title {
-  font-family: var(--font-body);
-  font-size: clamp(0.78rem, 2.4vw, 0.88rem);
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 2.2vw, 0.82rem);
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   color: var(--color-charcoal);
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
-  text-decoration-color: rgba(26, 26, 26, 0.45);
+  text-decoration-color: rgba(20, 20, 22, 0.45);
   margin: 0.65rem 0 0 0;
   display: inline-block;
   transition: color 0.2s ease, text-decoration-color 0.2s ease;

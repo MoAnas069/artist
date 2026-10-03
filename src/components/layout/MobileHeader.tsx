@@ -17,7 +17,7 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
     { label: 'About', path: '/me' },
     { label: 'Journal', path: '/journal' },
     { label: 'Shop', path: '/shop' },
-    { label: 'Contact', path: '/contact' },
+    { label: 'Start Your Project', path: '/contact' },
   ];
 
   return (
@@ -37,13 +37,34 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
         {/* Signature Artist Logo */}
         <Link
           to="/"
-          className="artist-signature-brand"
           style={{
-            textAlign: centerLogo ? 'center' : 'left',
+            display: 'inline-flex',
+            flexDirection: centerLogo ? 'column' : 'row',
+            alignItems: 'center',
+            gap: centerLogo ? '6px' : '12px',
+            textDecoration: 'none',
+            userSelect: 'none',
           }}
-          aria-label={settings.artistName}
+          aria-label={settings.artistName || 'Chintwo'}
         >
-          {settings.artistName.toLowerCase()}
+          <img
+            src="/chintwo-emblem-dark.png"
+            alt=""
+            style={{
+              height: centerLogo ? 'clamp(46px, 11vw, 62px)' : '32px',
+              width: 'auto',
+              display: 'block',
+            }}
+          />
+          <img
+            src="/chintwo-text-dark.png"
+            alt={settings.artistName || 'Chintwo'}
+            style={{
+              height: centerLogo ? 'clamp(34px, 8.5vw, 48px)' : '26px',
+              width: 'auto',
+              display: 'block',
+            }}
+          />
         </Link>
 
         {/* Minimal 2-Line Hamburger Menu Toggle */}
@@ -122,10 +143,32 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
               <Link
                 to="/"
                 onClick={() => setIsOpen(false)}
-                className="artist-signature-brand"
-                style={{ fontSize: 'clamp(2.4rem, 6.5vw, 3.2rem)' }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  textDecoration: 'none',
+                }}
+                aria-label={settings.artistName || 'Chintwo'}
               >
-                {settings.artistName.toLowerCase()}
+                <img
+                  src="/chintwo-emblem-dark.png"
+                  alt=""
+                  style={{
+                    height: '32px',
+                    width: 'auto',
+                    display: 'block',
+                  }}
+                />
+                <img
+                  src="/chintwo-text-dark.png"
+                  alt={settings.artistName || 'Chintwo'}
+                  style={{
+                    height: '26px',
+                    width: 'auto',
+                    display: 'block',
+                  }}
+                />
               </Link>
 
               {/* Close Button ✕ */}

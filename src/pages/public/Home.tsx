@@ -188,17 +188,6 @@ export default function Home() {
       driftAnim: 'kenBurnsDrift1',
     },
     {
-      label: 'Me',
-      sublabel: settings.meSublabel || 'Biography, Philosophy & Studio Practice',
-      path: '/me',
-      component: <Me />,
-      slides: [
-        settings.meXrayImage || settings.artistPortrait || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1920&auto=format&fit=crop&q=85',
-        'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1920&auto=format&fit=crop&q=85',
-      ],
-      driftAnim: 'kenBurnsDrift2',
-    },
-    {
       label: 'Journal',
       sublabel: settings.journalSublabel || 'Studio Notes, Process & Literary Essays',
       path: '/journal',
@@ -221,7 +210,7 @@ export default function Home() {
       driftAnim: 'kenBurnsDrift1',
     },
     {
-      label: 'Contact',
+      label: 'Start Your Project',
       sublabel: settings.contactSublabel || 'Commissions, Gallery Inquiries & Press',
       path: '/contact',
       component: <Contact />,
@@ -346,22 +335,60 @@ export default function Home() {
             boxSizing: 'border-box',
           }}
         >
-          <h1
+          <div
             ref={titleRef}
-            className="type-display-xl"
+            className="hero-artist-container"
             style={{
-              fontSize: 'clamp(3rem, 9vw, 7.5rem)',
-              fontWeight: 400,
-              letterSpacing: '-0.03em',
-              lineHeight: 0.95,
-              color: 'var(--color-charcoal)',
-              maxWidth: 1100,
-              margin: 0,
-              transform: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              userSelect: 'none',
+              cursor: 'default',
             }}
           >
-            {settings.artistName}
-          </h1>
+            {/* Custom Sigil / Emblem */}
+            <div
+              style={{
+                marginBottom: 'clamp(0.85rem, 2vw, 1.5rem)',
+                transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              <img
+                src="/chintwo-emblem-dark.png"
+                alt="Chintwo Emblem"
+                style={{
+                  width: 'clamp(70px, 9.5vw, 110px)',
+                  height: 'auto',
+                  display: 'block',
+                  filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.04))',
+                }}
+              />
+            </div>
+
+            {/* Handwritten Artist Name */}
+            <h1
+              className="hero-artist-name"
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                src="/chintwo-text-dark.png"
+                alt={settings.artistName || 'Chintwo'}
+                style={{
+                  width: 'clamp(350px, 52vw, 680px)',
+                  maxWidth: '92vw',
+                  height: 'auto',
+                  display: 'block',
+                }}
+              />
+            </h1>
+          </div>
         </section>
 
         {/* Directory Sections (Scroll-Transformed on Mobile | Cursor X-Ray on Desktop) */}
@@ -598,31 +625,66 @@ export default function Home() {
               gap: '1.25rem',
             }}
           >
+            {/* Luminous Logo Lockup in Dark Portal */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '0.5rem',
+                filter: 'drop-shadow(0 0 24px rgba(255, 255, 255, 0.45))',
+              }}
+            >
+              <img
+                src="/chintwo-emblem-light.png"
+                alt="Chintwo Emblem"
+                style={{
+                  width: 'clamp(70px, 9.5vw, 110px)',
+                  height: 'auto',
+                  marginBottom: 'clamp(0.85rem, 2vw, 1.5rem)',
+                  display: 'block',
+                }}
+              />
+              <img
+                src="/chintwo-text-light.png"
+                alt={settings.artistName || 'Chintwo'}
+                style={{
+                  width: 'clamp(350px, 52vw, 680px)',
+                  maxWidth: '92vw',
+                  height: 'auto',
+                  display: 'block',
+                }}
+              />
+            </div>
+
             <p
               style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(1.15rem, 2.2vw, 1.55rem)',
-                fontWeight: 450,
-                lineHeight: 1.5,
+                fontFamily: 'var(--font-reading)',
+                fontStyle: 'italic',
+                fontSize: 'clamp(1.2rem, 2.3vw, 1.65rem)',
+                fontWeight: 400,
+                lineHeight: 1.45,
                 color: '#ffffff',
                 margin: 0,
                 letterSpacing: '-0.01em',
               }}
             >
-              {settings.homepageStatement || 'Drawing the quiet spaces between memory and myth.'}
+              &ldquo;{settings.homepageStatement || 'Drawing the quiet spaces between memory and myth.'}&rdquo;
             </p>
 
             <p
               style={{
                 fontFamily: 'var(--font-body)',
-                color: 'rgba(255, 255, 255, 0.72)',
-                lineHeight: 1.7,
+                color: 'rgba(255, 255, 255, 0.76)',
+                lineHeight: 1.75,
                 maxWidth: 540,
                 margin: '0 auto',
-                fontSize: 'clamp(0.875rem, 1.3vw, 1rem)',
+                fontSize: 'clamp(0.875rem, 1.25vw, 0.975rem)',
+                letterSpacing: '-0.005em',
               }}
             >
-              {settings.shortBio || 'Contemporary illustrator and visual storyteller exploring solitude, chiaroscuro, and atmosphere through traditional and digital mediums.'}
+              {settings.shortBio || 'Visual artist and illustrator exploring atmospheric worlds, memory, and myth through traditional ink and digital mark-making.'}
             </p>
 
             <span
@@ -639,7 +701,7 @@ export default function Home() {
 
             <div style={{ marginTop: '0.75rem' }}>
               <button
-                onClick={(e) => triggerPageZoom('/me', 'Me', <Me />, e.clientX, e.clientY)}
+                onClick={(e) => triggerPageZoom('/work', 'Art', <Work />, e.clientX, e.clientY)}
                 onMouseEnter={() => setIsHoveringBtn(true)}
                 onMouseLeave={() => setIsHoveringBtn(false)}
                 style={{
@@ -662,7 +724,7 @@ export default function Home() {
                   boxShadow: isHoveringBtn ? '0 0 35px rgba(255, 255, 255, 0.45)' : '0 4px 20px rgba(0, 0, 0, 0.5)',
                 }}
               >
-                <span>ENTER ABOUT ME</span>
+                <span>ENTER GALLERY</span>
               </button>
             </div>
           </div>
