@@ -48,7 +48,7 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
           aria-label={settings.artistName || 'Chintwo'}
         >
           <img
-            src="/chintwo-emblem-dark.png"
+            src="/chintwo-emblem-dark.svg"
             alt=""
             style={{
               height: centerLogo ? 'clamp(46px, 11vw, 62px)' : '32px',
@@ -57,7 +57,7 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
             }}
           />
           <img
-            src="/chintwo-text-dark.png"
+            src="/chintwo-text-dark.svg"
             alt={settings.artistName || 'Chintwo'}
             style={{
               height: centerLogo ? 'clamp(34px, 8.5vw, 48px)' : '26px',
@@ -152,7 +152,7 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
                 aria-label={settings.artistName || 'Chintwo'}
               >
                 <img
-                  src="/chintwo-emblem-dark.png"
+                  src="/chintwo-emblem-dark.svg"
                   alt=""
                   style={{
                     height: '32px',
@@ -161,7 +161,7 @@ export default function MobileHeader({ centerLogo = false }: MobileHeaderProps) 
                   }}
                 />
                 <img
-                  src="/chintwo-text-dark.png"
+                  src="/chintwo-text-dark.svg"
                   alt={settings.artistName || 'Chintwo'}
                   style={{
                     height: '26px',

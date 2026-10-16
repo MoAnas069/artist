@@ -43,7 +43,7 @@ export default function BackToHome() {
         }}
       >
         <span style={{ fontSize: '0.85rem', lineHeight: 1 }}>←</span>
-        <span>Directory</span>
+        <span>Return to Gallery</span>
       </Link>
     </nav>
   );
