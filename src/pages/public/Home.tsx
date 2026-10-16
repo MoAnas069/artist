@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GalleryProvider, useGallery } from '../../hooks/useGallery';
+import { useGallery } from '../../hooks/useGallery';
 import { getGallerySections } from '../../services/galleryService';
 import type { GallerySection } from '../../types/gallery';
 import { DEFAULT_GALLERY_SECTIONS } from '../../types/gallery';
@@ -11,18 +11,17 @@ import GalleryHUD from '../../components/gallery/GalleryHUD';
 import MobileGallery from '../../components/gallery/MobileGallery';
 
 export default function Home() {
-  return (
-    <GalleryProvider>
-      <HomeInner />
-    </GalleryProvider>
-  );
-}
-
-function HomeInner() {
   const navigate = useNavigate();
-  const { state } = useGallery();
+  const { state, setPhase } = useGallery();
   const [sections, setSections] = useState<GallerySection[]>(DEFAULT_GALLERY_SECTIONS);
   const [webGLSupported, setWebGLSupported] = useState(true);
+
+  // If intro was already completed, always return directly inside the atrium
+  useEffect(() => {
+    if (state.introComplete && state.phase !== 'gallery') {
+      setPhase('gallery');
+    }
+  }, [state.introComplete, state.phase, setPhase]);
 
   // Load gallery config from Firebase / local cache in background
   useEffect(() => {

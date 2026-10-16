@@ -1,15 +1,21 @@
 import { createContext, useContext, useCallback, useRef, useState, type ReactNode } from 'react';
 import type { GalleryState, GalleryPhase, CameraTarget } from '../types/gallery';
 
-const INITIAL_STATE: GalleryState = {
-  phase: 'intro',
-  hoveredBoard: null,
-  selectedBoard: null,
-  focusedFrame: null,
-  cameraTarget: null,
-  lastGalleryCamera: null,
-  introComplete: false,
-  transitionLocked: false,
+const getInitialState = (): GalleryState => {
+  const isIntroDone =
+    typeof window !== 'undefined' &&
+    sessionStorage.getItem('chintwo_intro_complete') === '1';
+
+  return {
+    phase: isIntroDone ? 'gallery' : 'intro',
+    hoveredBoard: null,
+    selectedBoard: null,
+    focusedFrame: null,
+    cameraTarget: null,
+    lastGalleryCamera: null,
+    introComplete: isIntroDone,
+    transitionLocked: false,
+  };
 };
 
 interface GalleryContextType {
@@ -29,7 +35,7 @@ interface GalleryContextType {
 const GalleryContext = createContext<GalleryContextType | null>(null);
 
 export function GalleryProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<GalleryState>(INITIAL_STATE);
+  const [state, setState] = useState<GalleryState>(getInitialState);
   const lockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const lockTransition = useCallback((durationMs: number = 2000) => {

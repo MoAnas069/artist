@@ -268,17 +268,17 @@ export default function GalleryHUD({ sections, onNavigate }: GalleryHUDProps) {
             transition={{ duration: 0.4, delay: 0.15 }}
             style={{
               position: 'absolute',
-              bottom: isMobile ? '2rem' : '2.5rem',
-              left: '50%',
-              transform: 'translateX(-50%)',
+              bottom: isMobile ? 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' : '2.5rem',
+              left: 0,
+              right: 0,
+              margin: '0 auto',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: '0.65rem',
-              width: isMobile ? '88%' : 'auto',
-              minWidth: '280px',
-              maxWidth: '380px',
+              width: 'min(360px, 92vw)',
               pointerEvents: 'auto',
+              zIndex: 70,
             }}
           >
             {/* Primary Action Button — Leads directly to page! */}
@@ -287,16 +287,16 @@ export default function GalleryHUD({ sections, onNavigate }: GalleryHUDProps) {
               style={{
                 width: '100%',
                 minHeight: '48px',
-                padding: '0.85rem 2.2rem',
-                border: '1px solid rgba(212, 175, 55, 0.4)',
-                borderRadius: '4px',
+                padding: isMobile ? '0.85rem 1.25rem' : '0.85rem 2.2rem',
+                border: '1px solid rgba(212, 175, 55, 0.45)',
+                borderRadius: '6px',
                 backgroundColor: '#881B24',
                 backgroundImage: 'linear-gradient(135deg, #A8242E 0%, #7B171F 100%)',
-                color: '#FFF8F0',
+                color: '#FFFFFF',
                 fontFamily: 'var(--font-body)',
-                fontSize: '0.78rem',
+                fontSize: isMobile ? '0.74rem' : '0.78rem',
                 fontWeight: 600,
-                letterSpacing: '0.2em',
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 boxShadow:
@@ -305,6 +305,8 @@ export default function GalleryHUD({ sections, onNavigate }: GalleryHUDProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.6rem',
+                whiteSpace: 'nowrap',
+                boxSizing: 'border-box',
                 transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
@@ -327,17 +329,20 @@ export default function GalleryHUD({ sections, onNavigate }: GalleryHUDProps) {
               onClick={returnToGallery}
               style={{
                 minHeight: '36px',
-                padding: '0.4rem 1.4rem',
-                border: '1px solid rgba(40, 36, 32, 0.1)',
-                background: 'rgba(255, 255, 255, 0.85)',
-                backdropFilter: 'blur(8px)',
+                padding: '0.45rem 1.5rem',
+                border: '1px solid rgba(40, 36, 32, 0.12)',
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(10px)',
                 borderRadius: '20px',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.62rem',
-                color: 'rgba(40, 36, 32, 0.75)',
+                fontSize: '0.64rem',
+                fontWeight: 500,
+                color: 'rgba(40, 36, 32, 0.8)',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
+                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
+                whiteSpace: 'nowrap',
                 transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
@@ -345,8 +350,8 @@ export default function GalleryHUD({ sections, onNavigate }: GalleryHUDProps) {
                 e.currentTarget.style.color = '#1E1B18';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
-                e.currentTarget.style.color = 'rgba(40, 36, 32, 0.75)';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                e.currentTarget.style.color = 'rgba(40, 36, 32, 0.8)';
               }}
             >
               ← Return to Carpet

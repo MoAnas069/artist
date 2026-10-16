@@ -17,6 +17,7 @@ function AdminShortcutListener() {
 }
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './hooks/useAuth';
+import { GalleryProvider } from './hooks/useGallery';
 import { ToastProvider } from './components/ui/Toast';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import PageTransition from './components/layout/PageTransition';
@@ -56,11 +57,12 @@ export default function App() {
         <AuthProvider>
           <ToastProvider>
             <BrowserRouter>
-              <AdminShortcutListener />
-              <CustomCursor />
-              <Suspense fallback={<LoadingState />}>
-                <PageTransition>
-                  <Routes>
+              <GalleryProvider>
+                <AdminShortcutListener />
+                <CustomCursor />
+                <Suspense fallback={<LoadingState />}>
+                  <PageTransition>
+                    <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<Home />} />
                     <Route path="/work" element={<Work />} />
@@ -101,7 +103,8 @@ export default function App() {
                   </Routes>
                 </PageTransition>
               </Suspense>
-            </BrowserRouter>
+            </GalleryProvider>
+          </BrowserRouter>
           </ToastProvider>
         </AuthProvider>
       </HelmetProvider>

@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useGallery } from '../../hooks/useGallery';
 
 export default function BackToHome() {
+  const { setPhase } = useGallery();
+
   return (
     <nav
       style={{
@@ -13,6 +16,7 @@ export default function BackToHome() {
     >
       <Link
         to="/"
+        onClick={() => setPhase('gallery')}
         style={{
           display: 'inline-flex',
           alignItems: 'center',
