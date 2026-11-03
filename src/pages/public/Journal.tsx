@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { ArrowRight, BookOpen } from 'lucide-react';
 import { getPublishedPosts } from '../../services/journalService';
 import type { JournalPost } from '../../types';
 import { formatDate } from '../../utils/helpers';
@@ -8,9 +9,8 @@ import { useSiteSettings } from '../../hooks/useSiteSettings';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import LoadingState from '../../components/ui/LoadingState';
-import EmptyState from '../../components/ui/EmptyState';
+import inventoryData from '../../../content/inventory.json';
 
-// Helper to compute reading time
 function getReadingTime(content: string = ''): string {
   const text = content.replace(/<[^>]*>/g, '');
   const words = text.trim().split(/\s+/).length;
@@ -25,19 +25,28 @@ export default function Journal() {
   const [selectedTag, setSelectedTag] = useState<string>('All');
 
   useEffect(() => {
+    let mounted = true;
     getPublishedPosts()
-      .then(setPosts)
-      .catch((err) => console.error('Error fetching journal posts:', err))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!mounted) return;
+        setPosts(data.length > 0 ? data : (inventoryData.journal as any));
+      })
+      .catch(() => {
+        if (mounted) setPosts(inventoryData.journal as any);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // Compute all available tags
   const tags = useMemo(() => {
     const allTags = posts.flatMap((p) => p.tags || []).filter(Boolean);
     return ['All', ...Array.from(new Set(allTags))];
   }, [posts]);
 
-  // Filter posts by tag
   const filteredPosts = useMemo(() => {
     if (selectedTag === 'All') return posts;
     return posts.filter((p) => (p.tags || []).includes(selectedTag));
@@ -49,188 +58,125 @@ export default function Journal() {
   const regularPosts = filteredPosts.slice(1);
 
   return (
-    <div className="page-wrap">
+    <div className="dusk-page">
       <Helmet>
-        <title>{`Field Notes — Journal & Essays | ${settings.artistName || 'CHINTWO'}`}</title>
+        <title>{`Studio Notes & Essays — ${settings.artistName || 'Chintwo'}`}</title>
         <meta
           name="description"
-          content={`Field Notes by ${settings.artistName || 'CHINTWO'}. Essays on art, narrative illustration, studio observations, and creative practice.`}
+          content="Essays on chiaroscuro, negative space, and traditional printmaking techniques by visual artist Chintwo."
         />
       </Helmet>
 
       <Navbar />
 
-      <main id="main-content" className="page-content">
-        {/* Editorial Top Index Bar */}
-        <div style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg)' }}>
-          <div className="container">
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                padding: '1rem 0',
-              }}
-            >
-              <span className="type-meta">03 / FIELD NOTES</span>
-              <span className="type-meta">DISPATCHES &amp; STUDIO WRITINGS</span>
-            </div>
+      <main id="main-content" className="dusk-journal-page">
+        {/* Header */}
+        <section className="dusk-journal-header">
+          <div className="dusk-section-index-badge">
+            <span className="badge-num">04</span>
+            <span className="badge-text">STUDIO ESSAYS & PROCESS</span>
           </div>
-        </div>
 
-        {/* Header Section */}
-        <section className="section" style={{ paddingBottom: 'clamp(2.5rem, 5vh, 4rem)' }}>
-          <div className="container">
-            <div className="page-header-grid">
-              <div className="page-header-grid__title">
-                <h1 className="type-display-hero">Field Notes</h1>
-              </div>
-              <div className="page-header-grid__desc">
-                <p className="type-editorial" style={{ color: 'var(--color-stone)' }}>
-                  Thoughts, observations, studio experiments, and things worth remembering.
-                </p>
-              </div>
-            </div>
-
-            {/* Tag Filter Pills */}
-            {tags.length > 2 && (
-              <div className="filter-bar">
-                {tags.map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => setSelectedTag(tag)}
-                    className={`filter-btn ${selectedTag === tag ? 'filter-btn--active' : 'filter-btn--inactive'}`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="dusk-journal-title-row">
+            <h1 className="dusk-journal-title">Studio Reflections</h1>
+            <p className="dusk-journal-lead">
+              Observations on chiaroscuro lighting, the weight of quiet images, and physical monoprint synthesis.
+            </p>
           </div>
+
+          {/* Tags */}
+          {tags.length > 1 && (
+            <div className="dusk-filter-pills" role="tablist">
+              {tags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setSelectedTag(tag)}
+                  className={`dusk-filter-pill ${selectedTag === tag ? 'active' : ''}`}
+                >
+                  {tag.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* Articles List */}
-        <section style={{ paddingBottom: 'clamp(5rem, 10vh, 8rem)' }}>
-          <div className="container">
-            {filteredPosts.length === 0 ? (
-              <EmptyState
-                title="No articles found"
-                description={`There are currently no notes published under "${selectedTag}".`}
-              />
-            ) : (
-              <div>
-                {/* Featured Post (Hero Prominence) */}
-                {featuredPost && (
-                  <article
-                    className="editorial-split-5-7"
-                    style={{
-                      borderTop: '2px solid var(--color-charcoal)',
-                      paddingTop: 'clamp(2rem, 4vw, 3.5rem)',
-                      paddingBottom: 'clamp(3rem, 6vw, 4.5rem)',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {featuredPost.coverImage && (
-                      <div className="editorial-split-5-7__side">
-                        <Link to={`/journal/${featuredPost.slug}`} style={{ display: 'block' }}>
-                          <div
-                            style={{
-                              aspectRatio: '16 / 10',
-                              backgroundColor: 'var(--color-bg-alt)',
-                              overflow: 'hidden',
-                              boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
-                            }}
-                          >
-                            <img
-                              src={featuredPost.coverImage}
-                              alt={featuredPost.title}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          </div>
-                        </Link>
-                      </div>
-                    )}
+        {/* Featured Post */}
+        {featuredPost && (
+          <section className="dusk-journal-featured" aria-label="Featured Essay">
+            <article className="dusk-journal-featured-card">
+              <div className="dusk-featured-media breathing-artwork">
+                <Link to={`/journal/${featuredPost.slug}`}>
+                  <img
+                    src={featuredPost.coverImage}
+                    alt={featuredPost.title}
+                    className="dusk-featured-img"
+                  />
+                </Link>
+              </div>
 
-                    <div className={featuredPost.coverImage ? 'editorial-split-5-7__main' : ''} style={{ gridColumn: featuredPost.coverImage ? undefined : '1 / -1' }}>
-                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                        <span className="type-meta" style={{ color: 'var(--color-charcoal)', fontWeight: 600 }}>
-                          FEATURED ENTRY
-                        </span>
-                        <span className="type-meta">
-                          {featuredPost.publishedAt ? formatDate(featuredPost.publishedAt) : 'Recent'}
-                        </span>
-                        <span className="type-meta-sm">{getReadingTime(featuredPost.content)}</span>
-                      </div>
+              <div className="dusk-featured-content">
+                <div className="dusk-post-meta-row">
+                  <span className="dusk-post-badge">FEATURED ESSAY</span>
+                  <span className="dusk-post-time">
+                    <BookOpen size={12} style={{ display: 'inline', marginRight: 4 }} />
+                    {getReadingTime(featuredPost.content)}
+                  </span>
+                </div>
 
-                      <h2 className="type-display-lg" style={{ marginBottom: '1rem', lineHeight: 1.1 }}>
-                        <Link to={`/journal/${featuredPost.slug}`} className="link-underline">
-                          {featuredPost.title}
-                        </Link>
-                      </h2>
+                <h2 className="dusk-featured-title">
+                  <Link to={`/journal/${featuredPost.slug}`}>{featuredPost.title}</Link>
+                </h2>
 
-                      <p
-                        className="type-editorial"
-                        style={{
-                          color: 'var(--color-stone)',
-                          marginBottom: '1.75rem',
-                          maxWidth: '680px',
-                        }}
-                      >
-                        {featuredPost.excerpt}
-                      </p>
+                <p className="dusk-featured-excerpt">{featuredPost.excerpt}</p>
 
-                      <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <Link to={`/journal/${featuredPost.slug}`} className="btn-editorial btn-editorial--filled">
-                          Read Full Essay
-                        </Link>
-                        {featuredPost.tags && featuredPost.tags.length > 0 && (
-                          <span className="type-meta-sm">
-                            Tags: {featuredPost.tags.join(', ')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                )}
+                <div className="dusk-featured-footer">
+                  <Link to={`/journal/${featuredPost.slug}`} className="btn-dusk btn-dusk--primary">
+                    <span>READ COMPLETE ESSAY</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+            </article>
+          </section>
+        )}
 
-                {/* Regular Articles List */}
-                {regularPosts.map((post) => (
-                  <article key={post.id} className="journal-row">
-                    <div className="journal-row__meta">
-                      <span className="type-meta" style={{ display: 'block', marginBottom: '0.35rem' }}>
-                        {post.publishedAt ? formatDate(post.publishedAt) : 'Recent'}
-                      </span>
-                      <span className="type-meta-sm" style={{ color: 'var(--color-muted)' }}>
-                        {getReadingTime(post.content)}
-                      </span>
-                    </div>
-
-                    <div className="journal-row__body">
-                      <h3 className="type-display-md" style={{ marginBottom: '0.75rem', lineHeight: 1.2 }}>
-                        <Link to={`/journal/${post.slug}`} className="link-underline">
-                          {post.title}
-                        </Link>
-                      </h3>
-                      <p className="type-body" style={{ color: 'var(--color-stone)', maxWidth: '640px' }}>
-                        {post.excerpt}
-                      </p>
-                    </div>
-
-                    <div className="journal-row__action">
-                      <Link
-                        to={`/journal/${post.slug}`}
-                        className="btn-editorial"
-                        style={{ padding: '0.5rem 1rem', fontSize: '0.625rem' }}
-                      >
-                        Read Note →
+        {/* Regular Posts Grid */}
+        {regularPosts.length > 0 && (
+          <section className="dusk-journal-grid-section" aria-label="Recent Studio Notes">
+            <div className="dusk-journal-grid">
+              {regularPosts.map((post) => (
+                <article key={post.id} className="dusk-journal-grid-card">
+                  {post.coverImage && (
+                    <div className="dusk-grid-card-media breathing-artwork">
+                      <Link to={`/journal/${post.slug}`}>
+                        <img src={post.coverImage} alt={post.title} loading="lazy" />
                       </Link>
                     </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                  )}
+
+                  <div className="dusk-grid-card-content">
+                    <div className="dusk-post-meta-row">
+                      <span className="dusk-post-date">{formatDate(post.publishedAt || post.createdAt)}</span>
+                      <span className="dusk-post-time">{getReadingTime(post.content)}</span>
+                    </div>
+
+                    <h3 className="dusk-grid-card-title">
+                      <Link to={`/journal/${post.slug}`}>{post.title}</Link>
+                    </h3>
+
+                    <p className="dusk-grid-card-excerpt">{post.excerpt}</p>
+
+                    <Link to={`/journal/${post.slug}`} className="dusk-grid-card-link">
+                      <span>READ NOTE</span>
+                      <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />

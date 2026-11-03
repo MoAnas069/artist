@@ -1,0 +1,36 @@
+{
+  "threads": [
+    {
+      "id": "thread-chiaroscuro",
+      "name": "Chiaroscuro & Twilight",
+      "motif": "The low golden lantern against obsidian shadows",
+      "color": "rgba(223, 155, 82, 0.45)",
+      "artworkIds": ["art-1", "art-2"],
+      "description": "Explorations of lone embers, raw umber washes, and the quiet hour when sky and earth merge."
+    },
+    {
+      "id": "thread-cartography",
+      "name": "Mythic Coordinates",
+      "motif": "Memory, loss, and ancestral navigation",
+      "color": "rgba(180, 160, 130, 0.40)",
+      "artworkIds": ["art-3", "art-1"],
+      "description": "Studies on forgotten seaways, ink geography, and celestial markings on aged rag."
+    },
+    {
+      "id": "thread-solitude",
+      "name": "The Threshold State",
+      "motif": "Single travelers, fogged stations, and quiet departures",
+      "color": "rgba(100, 140, 165, 0.45)",
+      "artworkIds": ["art-2", "art-4"],
+      "description": "Payne's grey horizons and the silent suspension between journey and return."
+    },
+    {
+      "id": "thread-materiality",
+      "name": "Handmade Ink & Monoprint",
+      "motif": "Washi grain, oil viscosity, and litho pressure",
+      "color": "rgba(205, 185, 160, 0.40)",
+      "artworkIds": ["art-1", "art-3", "art-4"],
+      "description": "Works anchored in physical paper relief, bone folders, and organic sediment."
+    }
+  ]
+}

@@ -1,219 +1,214 @@
-import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingBag, ShieldCheck, Truck, Sparkles, Check, ArrowRight } from 'lucide-react';
 import { getAvailableProducts } from '../../services/productService';
 import type { Product } from '../../types';
-import { formatPrice } from '../../utils/helpers';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useCart } from '../../context/CartContext';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import LoadingState from '../../components/ui/LoadingState';
-import EmptyState from '../../components/ui/EmptyState';
+import inventoryData from '../../../content/inventory.json';
+
+const DEFAULT_FRAMES = [
+  { id: 'unframed', name: 'Unframed (Rolled in archival paper)', priceDelta: 0 },
+  { id: 'walnut', name: 'Solid American Walnut & Museum UV Glass', priceDelta: 110 },
+  { id: 'black-oak', name: 'Stained Black Oak & Anti-Reflective Glass', priceDelta: 95 },
+  { id: 'natural-ash', name: 'Natural White Ash Deep Float Frame', priceDelta: 105 },
+];
 
 export default function Editions() {
   const { settings } = useSiteSettings();
+  const { addItem, openCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedType, setSelectedType] = useState<string>('All');
+  const [selectedFrames, setSelectedFrames] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    let mounted = true;
     getAvailableProducts()
-      .then(setProducts)
-      .catch((err) => console.error('Error fetching editions:', err))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!mounted) return;
+        const list = data.length > 0 ? data : (inventoryData.prints as any);
+        setProducts(list);
+        const initialFrames: Record<string, string> = {};
+        list.forEach((p: any) => {
+          initialFrames[p.id] = 'unframed';
+        });
+        setSelectedFrames(initialFrames);
+      })
+      .catch(() => {
+        if (mounted) {
+          const list = inventoryData.prints as any;
+          setProducts(list);
+          const initialFrames: Record<string, string> = {};
+          list.forEach((p: any) => {
+            initialFrames[p.id] = 'unframed';
+          });
+          setSelectedFrames(initialFrames);
+        }
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
   }, []);
-
-  const types = useMemo(() => {
-    const allTypes = products.map((p) => p.type).filter(Boolean);
-    return ['All', ...Array.from(new Set(allTypes))];
-  }, [products]);
-
-  const filteredProducts = useMemo(() => {
-    if (selectedType === 'All') return products;
-    return products.filter((p) => p.type === selectedType);
-  }, [products, selectedType]);
 
   if (loading) return <LoadingState />;
 
+  const handleFrameChange = (productId: string, frameId: string) => {
+    setSelectedFrames((prev) => ({ ...prev, [productId]: frameId }));
+  };
+
+  const handleAddToCart = (product: Product) => {
+    const frameId = selectedFrames[product.id] || 'unframed';
+    addItem(product, frameId);
+  };
+
   return (
-    <div className="page-wrap">
+    <div className="dusk-page">
       <Helmet>
-        <title>{`The Editions — Collectible Prints & Artifacts | ${settings.artistName || 'CHINTWO'}`}</title>
+        <title>{`Archival Prints & Limited Editions — ${settings.artistName || 'Chintwo'}`}</title>
         <meta
           name="description"
-          content={`Limited edition archival prints, publications, and studio artifacts by ${settings.artistName || 'CHINTWO'}. Each piece is individually inspected and signed.`}
+          content="Museum-grade archival Giclée prints and hand-pulled screenprints on 310gsm German Etching cotton rag. Signed and numbered by Chintwo."
         />
       </Helmet>
 
       <Navbar />
 
-      <main id="main-content" className="page-content">
-        {/* Editorial Top Index Bar */}
-        <div style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg)' }}>
-          <div className="container">
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                padding: '1rem 0',
-              }}
-            >
-              <span className="type-meta">04 / THE EDITIONS</span>
-              <span className="type-meta">ARCHIVAL PRINTS &amp; ARTIFACTS</span>
-            </div>
+      <main id="main-content" className="dusk-editions-page">
+        {/* Header */}
+        <section className="dusk-editions-header">
+          <div className="dusk-section-index-badge">
+            <span className="badge-num">02</span>
+            <span className="badge-text">LIMITED EDITIONS</span>
           </div>
-        </div>
 
-        {/* Header Section */}
-        <section className="section" style={{ paddingBottom: 'clamp(2.5rem, 5vh, 4rem)' }}>
-          <div className="container">
-            <div className="page-header-grid">
-              <div className="page-header-grid__title">
-                <h1 className="type-display-hero">The Editions</h1>
-              </div>
-              <div className="page-header-grid__desc">
-                <p className="type-editorial" style={{ color: 'var(--color-stone)' }}>
-                  Archival museum-grade prints, limited edition folios, and studio collectibles. Hand-numbered and signed with a certificate of authenticity.
-                </p>
+          <div className="dusk-editions-title-row">
+            <h1 className="dusk-editions-title">The Print Archive</h1>
+            <p className="dusk-editions-lead">
+              Strictly limited fine art impressions on 310gsm Hahnemühle German Etching paper and Somerset Satin. Each edition is embossed with the studio seal, numbered, and hand-signed in pencil.
+            </p>
+          </div>
+
+          {/* Standards & Guarantees */}
+          <div className="dusk-editions-features">
+            <div className="dusk-feature-item">
+              <ShieldCheck size={16} className="dusk-feature-icon" />
+              <div>
+                <h4>Archival Longevity</h4>
+                <p>100% cotton rag, acid-free pigment inks rated for 100+ years lightfastness.</p>
               </div>
             </div>
-
-            {/* Filter Pills */}
-            {types.length > 2 && (
-              <div className="filter-bar">
-                {types.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setSelectedType(type)}
-                    className={`filter-btn ${selectedType === type ? 'filter-btn--active' : 'filter-btn--inactive'}`}
-                  >
-                    {type}
-                  </button>
-                ))}
+            <div className="dusk-feature-item">
+              <Sparkles size={16} className="dusk-feature-icon" />
+              <div>
+                <h4>Signed & Numbered</h4>
+                <p>Strictly capped editions with blind-embossed studio seal of authenticity.</p>
               </div>
-            )}
+            </div>
+            <div className="dusk-feature-item">
+              <Truck size={16} className="dusk-feature-icon" />
+              <div>
+                <h4>Global Courier Delivery</h4>
+                <p>Insured courier dispatch in reinforced custom timber or telescopic tubes.</p>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Editions Catalogue Grid */}
-        <section style={{ paddingBottom: 'clamp(5rem, 10vh, 8rem)' }}>
-          <div className="container">
-            {filteredProducts.length === 0 ? (
-              <EmptyState
-                title="No editions available"
-                description={`There are currently no items under "${selectedType}".`}
-              />
-            ) : (
-              <motion.div
-                layout
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
-                  gap: 'clamp(1.5rem, 3.5vw, 3rem)',
-                }}
-              >
-                <AnimatePresence>
-                  {filteredProducts.map((prod) => (
-                    <motion.div
-                      key={prod.id}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      <Link to={`/editions/${prod.slug}`} className="artwork-card" style={{ display: 'block' }} data-cursor="View">
-                        <div
-                          className="artwork-card__image-wrap"
-                          style={{
-                            aspectRatio: '4 / 5',
-                            backgroundColor: 'var(--color-bg-alt)',
-                          }}
-                        >
-                          {prod.images && prod.images[0] && (
-                            <img
-                              src={prod.images[0]}
-                              alt={prod.title}
-                              className="artwork-card__image"
-                              loading="lazy"
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          )}
-                        </div>
+        {/* Editions Catalog */}
+        <section className="dusk-editions-grid-section" aria-label="Available Editions">
+          <div className="dusk-editions-catalog">
+            {products.map((product) => {
+              const frames = (product as any).framingOptions || DEFAULT_FRAMES;
+              const currentFrameId = selectedFrames[product.id] || 'unframed';
+              const chosenFrame = frames.find((f: any) => f.id === currentFrameId) || frames[0];
+              const calculatedPrice = (product.price || 95) + chosenFrame.priceDelta;
 
-                        <div className="artwork-card__meta">
-                          <div>
-                            <h2 className="artwork-card__title" style={{ fontSize: '1.15rem' }}>
-                              {prod.title}
-                            </h2>
-                            <span className="type-meta-sm" style={{ color: 'var(--color-stone)' }}>
-                              {prod.edition || prod.type || 'Limited Edition'}
-                            </span>
-                          </div>
+              return (
+                <article key={product.id} className="dusk-edition-full-card">
+                  <div className="dusk-edition-visual breathing-artwork">
+                    <img
+                      src={(product.images && product.images[0]) || (product as any).coverImage || ''}
+                      alt={product.title}
+                      loading="lazy"
+                    />
+                    <div className="dusk-edition-badge">
+                      {(product as any).editionSize
+                        ? `Edition of ${(product as any).editionSize}`
+                        : product.edition || 'Limited Edition'}
+                    </div>
+                  </div>
 
-                          <div style={{ textAlign: 'right' }}>
-                            <span className="type-meta" style={{ color: 'var(--color-charcoal)', fontWeight: 600 }}>
-                              {formatPrice(prod.price, prod.currency)}
-                            </span>
-                            <span
-                              className="type-meta-sm"
-                              style={{
-                                display: 'block',
-                                color: prod.available ? '#10b981' : 'var(--color-muted)',
-                                marginTop: '0.15rem',
-                              }}
+                  <div className="dusk-edition-content">
+                    <div className="dusk-edition-top">
+                      <span className="dusk-edition-type">
+                        {(product as any).editionType || 'ARCHIVAL GICLÉE'}
+                      </span>
+                      <h2 className="dusk-edition-title">{product.title}</h2>
+                      <div className="dusk-edition-calc-price">
+                        £{calculatedPrice} <span className="currency-label">GBP</span>
+                      </div>
+                    </div>
+
+                    <p className="dusk-edition-desc">{product.description}</p>
+
+                    {/* Framing Selector */}
+                    <div className="dusk-framing-selector">
+                      <label className="dusk-framing-label">
+                        <span>SELECT PRESENTATION & FRAMING</span>
+                      </label>
+                      <div className="dusk-frame-radios" role="radiogroup">
+                        {frames.map((frame: any) => {
+                          const isSelected = currentFrameId === frame.id;
+                          return (
+                            <button
+                              key={frame.id}
+                              type="button"
+                              role="radio"
+                              aria-checked={isSelected}
+                              onClick={() => handleFrameChange(product.id, frame.id)}
+                              className={`dusk-frame-option ${isSelected ? 'selected' : ''}`}
                             >
-                              {prod.available ? 'Available' : 'Sold Out'}
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-            )}
+                              <div className="dusk-frame-radio-circle">
+                                {isSelected && <Check size={11} />}
+                              </div>
+                              <span className="dusk-frame-name">{frame.name}</span>
+                              <span className="dusk-frame-delta">
+                                {frame.priceDelta === 0 ? 'Included' : `+£${frame.priceDelta}`}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
 
-            {/* Quality Statement / Guarantee */}
-            <div
-              style={{
-                borderTop: '1px solid var(--color-border)',
-                marginTop: 'clamp(4rem, 8vh, 6rem)',
-                paddingTop: '2.5rem',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '2rem',
-              }}
-            >
-              <div>
-                <span className="type-meta-sm" style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--color-charcoal)' }}>
-                  ARCHIVAL PIGMENT
-                </span>
-                <p className="type-body-sm">
-                  Printed using 11-color UltraChrome HDR archival pigment inks on 310gsm 100% cotton rag paper. Rated lightfast for 100+ years.
-                </p>
-              </div>
+                    {/* Actions */}
+                    <div className="dusk-edition-buttons">
+                      <button
+                        type="button"
+                        onClick={() => handleAddToCart(product)}
+                        className="btn-dusk btn-dusk--primary dusk-reserve-btn"
+                      >
+                        <ShoppingBag size={15} />
+                        <span>RESERVE EDITION (£{calculatedPrice})</span>
+                      </button>
 
-              <div>
-                <span className="type-meta-sm" style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--color-charcoal)' }}>
-                  SIGNED &amp; NUMBERED
-                </span>
-                <p className="type-body-sm">
-                  Every print is individually inspected, hand-numbered in graphite, and embossed with the official CHINTWO studio seal.
-                </p>
-              </div>
-
-              <div>
-                <span className="type-meta-sm" style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--color-charcoal)' }}>
-                  GLOBAL PACKAGING
-                </span>
-                <p className="type-body-sm">
-                  Shipped worldwide in reinforced, acid-free archival tubes or museum-grade flat packaging with tracked courier dispatch.
-                </p>
-              </div>
-            </div>
+                      <a
+                        href={`mailto:${settings.email || 'studio@chintwo.com'}?subject=Inquiry: ${encodeURIComponent(product.title)}`}
+                        className="btn-dusk btn-dusk--ghost"
+                      >
+                        <span>ENQUIRE VIA STUDIO</span>
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       </main>

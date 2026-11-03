@@ -1,0 +1,353 @@
+{
+  "artist": {
+    "name": "Chintwo",
+    "descriptor": "Visual artist exploring atmospheric worlds, memory, and myth through textured brushwork and quiet light.",
+    "shortBio": "Visual artist and illustrator exploring atmospheric worlds, memory, and myth.",
+    "longBio": [
+      "Chintwo is a contemporary artist and visual storyteller specializing in atmospheric illustration, textured mark-making, and narrative image creation.",
+      "Working across traditional inks, graphite, and expressive digital refinement, Chintwo builds evocative imagery centered on quiet reflection, chiaroscuro lighting, and poetic human narratives."
+    ],
+    "portrait": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1000&auto=format&fit=crop&q=80",
+    "email": "studio@chintwo.com",
+    "socials": {
+      "instagram": "https://instagram.com",
+      "threads": "https://threads.net",
+      "twitter": "https://x.com"
+    },
+    "studioPractice": "All pieces begin as sketchbook studies in ink or oil pastels before being developed into full compositions with rich paper grain. Layered umber washes and charcoal dust create the subtle tactile depth characteristic of the studio's output.",
+    "selectedClients": [
+      "Penguin Random House",
+      "The New Yorker",
+      "The Folio Society",
+      "Faber & Faber",
+      "The Atlantic",
+      "Granta"
+    ],
+    "exhibitions": [
+      {
+        "year": "2025",
+        "title": "Solo Exhibition — Gallery No. 9",
+        "location": "London, UK",
+        "type": "Solo"
+      },
+      {
+        "year": "2024",
+        "title": "Group Show — Somerset House",
+        "location": "London, UK",
+        "type": "Group"
+      },
+      {
+        "year": "2023",
+        "title": "World Illustration Awards Shortlist",
+        "location": "International",
+        "type": "Award"
+      }
+    ]
+  },
+  "series": [
+    {
+      "id": "coastal-stillness",
+      "number": "01",
+      "title": "Coastal Stillness",
+      "theme": "Studies on twilight falling over desolate headlands, solitary tides, and winter stillness.",
+      "leadArtworkId": "art-1",
+      "artworkIds": ["art-1", "art-5"],
+      "previewImage": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1200&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "solitudes-and-nocturnes",
+      "number": "02",
+      "title": "Solitudes & Nocturnes",
+      "theme": "Literary and narrative examinations of distance, quiet rooms, and the glow of distant lanterns.",
+      "leadArtworkId": "art-2",
+      "artworkIds": ["art-2", "art-6"],
+      "previewImage": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "cartographic-memory",
+      "number": "03",
+      "title": "Cartographic Memory",
+      "theme": "Mythic suites inspired by 16th-century navigational maps, lost coordinates, and celestial charts.",
+      "leadArtworkId": "art-3",
+      "artworkIds": ["art-3", "art-7"],
+      "previewImage": "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=1200&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "thresholds-and-mists",
+      "number": "04",
+      "title": "Thresholds & Mists",
+      "theme": "Figures lingering at the margins of departures, train platforms, and Payne's grey horizons.",
+      "leadArtworkId": "art-4",
+      "artworkIds": ["art-4", "art-8"],
+      "previewImage": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80"
+    }
+  ],
+  "artworks": [
+    {
+      "id": "art-1",
+      "title": "The Silent Hour",
+      "slug": "the-silent-hour",
+      "seriesId": "coastal-stillness",
+      "seriesTitle": "Coastal Stillness",
+      "category": "Editorial",
+      "year": 2025,
+      "medium": "Gouache & Monoprint on archival paper",
+      "dimensions": "420 × 594 mm (A2)",
+      "description": "A study on dusk settling over coastal headlands, painted for a personal series on winter stillness.",
+      "artistNotes": "Created using raw umber washes and layered charcoal dust applied with Japanese hake brushes.",
+      "credits": "Private Collection",
+      "availability": "Acquired (Private Collection)",
+      "coverImage": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1200&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "macroCrop": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1600&auto=format&fit=crop&q=85",
+      "macroCaption": "Layered charcoal wash and dry-brush gouache grain on 300gsm cold-pressed cotton rag.",
+      "featured": true,
+      "printAvailable": true,
+      "printSlug": "the-silent-hour-print"
+    },
+    {
+      "id": "art-2",
+      "title": "Nocturne for Two Solitudes",
+      "slug": "nocturne-for-two-solitudes",
+      "seriesId": "solitudes-and-nocturnes",
+      "seriesTitle": "Solitudes & Nocturnes",
+      "category": "Publishing",
+      "year": 2025,
+      "medium": "Digital composite with handmade ink grain",
+      "dimensions": "300 × 450 mm",
+      "description": "Commissioned cover illustration for a literary translation exploring distance between old friends.",
+      "artistNotes": "Balancing deep Prussian blues against the warm ember glow of a distant lantern.",
+      "credits": "Commissioned by Gallimard Éditions",
+      "availability": "Commissioned (Archival prints available)",
+      "coverImage": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1549887534-1541e9326642?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": true,
+      "printSlug": "nocturne-for-two-solitudes-edition"
+    },
+    {
+      "id": "art-3",
+      "title": "The Cartographer’s Dream",
+      "slug": "the-cartographers-dream",
+      "seriesId": "cartographic-memory",
+      "seriesTitle": "Cartographic Memory",
+      "category": "Series",
+      "year": 2024,
+      "medium": "Ink, ochre pigment, and graphite",
+      "dimensions": "500 × 700 mm",
+      "description": "Part of an ongoing suite of narrative prints about forgotten sea routes and lost coordinates.",
+      "artistNotes": "Inspired by 16th-century navigational maps and celestial charts.",
+      "credits": "Featured at Somerset House Exhibition",
+      "availability": "Available for acquisition",
+      "coverImage": "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=1200&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": false
+    },
+    {
+      "id": "art-4",
+      "title": "Arrival in the Cold Mist",
+      "slug": "arrival-in-the-cold-mist",
+      "seriesId": "thresholds-and-mists",
+      "seriesTitle": "Thresholds & Mists",
+      "category": "Personal",
+      "year": 2024,
+      "medium": "Oil on linen panel",
+      "dimensions": "600 × 800 mm",
+      "description": "A solitary traveler standing at the edge of an empty platform as dusk settles.",
+      "artistNotes": "A study in limited color value — using primarily Payne’s grey and Naples yellow.",
+      "credits": "Artist Archive",
+      "availability": "Studio Archive (Inquire for loan or sale)",
+      "coverImage": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": false
+    },
+    {
+      "id": "art-5",
+      "title": "Tide of the Pale Hour",
+      "slug": "tide-of-the-pale-hour",
+      "seriesId": "coastal-stillness",
+      "seriesTitle": "Coastal Stillness",
+      "category": "Editorial",
+      "year": 2025,
+      "medium": "Monoprint & drypoint on Japanese washi",
+      "dimensions": "380 × 520 mm",
+      "description": "Exploration of tidal foam caught under evening twilight against jagged basalt cliffs.",
+      "artistNotes": "Hand-pulled using bone folder pressure and diluted graphite paste.",
+      "credits": "Studio Archive",
+      "availability": "Available for acquisition",
+      "coverImage": "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": true,
+      "printSlug": "tide-of-the-pale-hour-print"
+    },
+    {
+      "id": "art-6",
+      "title": "Ember in the Library",
+      "slug": "ember-in-the-library",
+      "seriesId": "solitudes-and-nocturnes",
+      "seriesTitle": "Solitudes & Nocturnes",
+      "category": "Publishing",
+      "year": 2024,
+      "medium": "Oil pastel & charcoal on toned paper",
+      "dimensions": "400 × 550 mm",
+      "description": "Interior study of late-night reading and the warm refraction of candle wax against leather bindings.",
+      "artistNotes": "Heavy impasto marks with walnut oil glaze highlights.",
+      "credits": "Commissioned by The Folio Society",
+      "availability": "Private Collection",
+      "coverImage": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": false
+    },
+    {
+      "id": "art-7",
+      "title": "Passage to the Outer Isles",
+      "slug": "passage-to-the-outer-isles",
+      "seriesId": "cartographic-memory",
+      "seriesTitle": "Cartographic Memory",
+      "category": "Series",
+      "year": 2024,
+      "medium": "Iron gall ink, gold leaf & tea stain",
+      "dimensions": "480 × 640 mm",
+      "description": "Speculative nautical cartography rendering phantom shoals and forgotten soundings.",
+      "artistNotes": "Application of 23kt gold leaf over distressed handmade hemp paper.",
+      "credits": "Featured at Gallery No. 9",
+      "availability": "Available for acquisition",
+      "coverImage": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": true,
+      "printSlug": "passage-to-the-outer-isles-print"
+    },
+    {
+      "id": "art-8",
+      "title": "The Station at Dawn",
+      "slug": "the-station-at-dawn",
+      "seriesId": "thresholds-and-mists",
+      "seriesTitle": "Thresholds & Mists",
+      "category": "Personal",
+      "year": 2023,
+      "medium": "Casein paint & graphite wash on panel",
+      "dimensions": "550 × 750 mm",
+      "description": "A quiet visual poem depicting the first light filtering through train station steam.",
+      "artistNotes": "Scumbled matte casein medium layered over dense graphite cross-hatching.",
+      "credits": "Artist Archive",
+      "availability": "Studio Archive",
+      "coverImage": "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1200&auto=format&fit=crop&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=1200&auto=format&fit=crop&q=80"
+      ],
+      "featured": true,
+      "printAvailable": false
+    }
+  ],
+  "prints": [
+    {
+      "id": "prod-1",
+      "title": "The Silent Hour",
+      "editionType": "Limited Archival Giclée",
+      "slug": "the-silent-hour-print",
+      "artworkId": "art-1",
+      "price": 95,
+      "currency": "GBP",
+      "currencySymbol": "£",
+      "editionSize": 50,
+      "remainingCount": 18,
+      "materials": "Hahnemühle 310gsm German Etching 100% cotton rag, archival pigment inks",
+      "dimensions": "420 × 594 mm (A2)",
+      "framingOptions": [
+        { "id": "unframed", "name": "Unframed (Rolled in archival tissue & tube)", "priceDelta": 0 },
+        { "id": "walnut", "name": "Solid American Walnut Frame & Museum Glass", "priceDelta": 110 },
+        { "id": "black-oak", "name": "Stained Black Oak & Anti-Reflective UV Glass", "priceDelta": 95 },
+        { "id": "natural-ash", "name": "Natural White Ash Float Frame", "priceDelta": 105 }
+      ],
+      "description": "Limited museum-grade Giclée print on 310gsm Hahnemühle German Etching paper. Numbered, embossed with the studio seal, and hand-signed by Chintwo.",
+      "images": [
+        "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1000&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1000&auto=format&fit=crop&q=80"
+      ],
+      "inStock": true
+    },
+    {
+      "id": "prod-2",
+      "title": "Nocturne for Two Solitudes",
+      "editionType": "Hand-Pulled Fine Art Screenprint",
+      "slug": "nocturne-for-two-solitudes-edition",
+      "artworkId": "art-2",
+      "price": 130,
+      "currency": "GBP",
+      "currencySymbol": "£",
+      "editionSize": 35,
+      "remainingCount": 7,
+      "materials": "Somerset Satin 300gsm paper, water-based acrylic inks with metallic copper overlay",
+      "dimensions": "500 × 700 mm",
+      "framingOptions": [
+        { "id": "unframed", "name": "Unframed (Shipped flat in reinforced casing)", "priceDelta": 0 },
+        { "id": "walnut", "name": "Solid American Walnut Frame & Museum Glass", "priceDelta": 125 },
+        { "id": "black-oak", "name": "Stained Black Oak & Anti-Reflective UV Glass", "priceDelta": 110 },
+        { "id": "natural-ash", "name": "Natural White Ash Float Frame", "priceDelta": 115 }
+      ],
+      "description": "Hand-pulled 4-color screenprint with custom metallic copper overlay on Somerset Satin paper. Signed and strictly numbered in pencil by the artist.",
+      "images": [
+        "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000&auto=format&fit=crop&q=80"
+      ],
+      "inStock": true
+    }
+  ],
+  "journal": [
+    {
+      "id": "post-1",
+      "title": "On the Weight of Quiet Images",
+      "slug": "on-the-weight-of-quiet-images",
+      "date": "2025-01-20",
+      "tags": ["Process", "Philosophy", "Illustration"],
+      "excerpt": "Notes on using negative space, chiaroscuro, and restraint in contemporary editorial visual storytelling.",
+      "content": "<p>There is a peculiar tension in modern image-making. So much visual media demands immediate attention with screaming color and hyperactivity. Yet the images that stay with us for decades are almost always the quiet ones.</p><p>When working on an editorial brief, the temptation is often to fill the frame with narrative elements until every corner is explained. But leaving shadow untouched invites the viewer to step into the scene and bring their own memories.</p>",
+      "coverImage": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1000&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "post-2",
+      "title": "Monoprint Textures and Digital Synthesis",
+      "slug": "monoprint-textures-and-digital-synthesis",
+      "date": "2024-11-05",
+      "tags": ["Technique", "Printmaking"],
+      "excerpt": "How physical printmaking informs digital brush engines and keeps organic texture alive.",
+      "content": "<p>Every digital artwork I produce starts on the litho press or glass inking slab. By transferring oil-based inks with rollers onto handmade washi paper, unpredictable grain patterns emerge that no digital algorithm can mimic.</p>",
+      "coverImage": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1000&auto=format&fit=crop&q=80"
+    }
+  ],
+  "auditMetadata": {
+    "auditedAt": "2026-11-04T00:50:00Z",
+    "weaknessesIdentified": [
+      "Previous layout relied on standard flat cards without atmospheric depth or chiaroscuro resonance.",
+      "No direct connection between series and overarching artistic mythology.",
+      "Artworks lacked tactile detail presentation to highlight gouache grain and monoprint texture.",
+      "Navigation was conventional text rather than visual storytelling.",
+      "Mobile view previously lost editorial pacing and scale hierarchy."
+    ],
+    "gapsFlagged": [
+      "Series detail dynamic routing (provided via /works/[series] and /works/[series]/[work])",
+      "Series row index with interactive hover previews (implemented in Section 4)"
+    ]
+  }
+}

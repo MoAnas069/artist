@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ShoppingBag, Sun, Moon, Menu, X } from 'lucide-react';
 import { useSiteSettings } from '../../hooks/useSiteSettings';
+import { useCart } from '../../context/CartContext';
+import { useTheme } from '../../context/ThemeContext';
+import AmbientSound from '../audio/AmbientSound';
 
 const NAV_ITEMS = [
-  { label: 'WORK', path: '/work', index: '01' },
-  { label: 'PERSON', path: '/about', index: '02' },
-  { label: 'NOTES', path: '/journal', index: '03' },
-  { label: 'EDITIONS', path: '/editions', index: '04' },
+  { label: 'WORKS', path: '/works', index: '01' },
+  { label: 'PRINTS', path: '/prints', index: '02' },
+  { label: 'ABOUT', path: '/about', index: '03' },
+  { label: 'JOURNAL', path: '/journal', index: '04' },
   { label: 'CONTACT', path: '/contact', index: '05' },
 ];
 
 export default function Navbar() {
   const location = useLocation();
   const { settings } = useSiteSettings();
+  const { totalCount, openCart } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -27,133 +33,170 @@ export default function Navbar() {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [menuOpen]);
 
-  const socialLinks = [
-    ...(settings.instagram ? [{ label: 'Instagram', url: settings.instagram }] : []),
-    ...(settings.twitter ? [{ label: 'X / Twitter', url: settings.twitter }] : []),
-    ...(settings.threads ? [{ label: 'Threads', url: settings.threads }] : []),
-    ...(settings.discord ? [{ label: 'Discord', url: settings.discord }] : []),
-  ];
+  const isCurrent = (path: string) => {
+    if (path === '/works') {
+      return location.pathname === '/works' || location.pathname.startsWith('/work');
+    }
+    if (path === '/prints') {
+      return location.pathname === '/prints' || location.pathname.startsWith('/editions') || location.pathname.startsWith('/shop');
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <>
-      <nav className={`nav${scrolled ? ' nav--scrolled' : ''}`} role="navigation" aria-label="Main navigation">
-        {/* Wordmark */}
-        <Link to="/" className="wordmark" aria-label={settings.artistName || 'CHINTWO'}>
-          CHINTWO<span className="wordmark-reg">®</span>
-        </Link>
+      <header
+        className={`dusk-nav ${scrolled ? 'dusk-nav--scrolled' : ''}`}
+        role="banner"
+      >
+        <div className="dusk-nav-inner">
+          {/* Brand Left */}
+          <Link to="/" className="dusk-wordmark" aria-label={settings.artistName || 'CHINTWO'}>
+            <span className="dusk-wordmark-title">CHINTWO</span>
+            <span className="dusk-wordmark-sub">STUDIO ARCHIVE</span>
+          </Link>
 
-        {/* Desktop Links */}
-        <div className="nav__links">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`nav__link${location.pathname.startsWith(item.path) ? ' nav__link--active' : ''}`}
+          {/* Center / Desktop Links */}
+          <nav className="dusk-nav-links" role="navigation" aria-label="Main gallery navigation">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`dusk-nav-link ${isCurrent(item.path) ? 'active' : ''}`}
+              >
+                <span className="dusk-nav-index">{item.index}</span>
+                <span className="dusk-nav-text">{item.label}</span>
+              </Link>
+            ))}
+          </nav>
+
+          {/* Right Controls: Ambient Audio, Daylight Toggle, Cart Folio */}
+          <div className="dusk-nav-actions">
+            <AmbientSound />
+
+            {/* Daylight / Dusk Theme Toggle */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="dusk-theme-toggle"
+              title={theme === 'dusk' ? 'Switch to restrained Daylight Mode' : 'Switch to signature Dusk Gallery Mode'}
+              aria-label="Toggle theme"
             >
-              <span className="nav__link-index">{item.index}</span>
-              <span className="nav__link-text">{item.label}</span>
-            </Link>
-          ))}
+              {theme === 'dusk' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+
+            {/* Collector Cart Folio Button */}
+            <button
+              type="button"
+              onClick={openCart}
+              className="dusk-cart-nav-btn"
+              aria-label={`Open collection folio, ${totalCount} items`}
+            >
+              <ShoppingBag size={15} />
+              <span className="dusk-cart-nav-text">FOLIO</span>
+              {totalCount > 0 && <span className="dusk-cart-count">{totalCount}</span>}
+            </button>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              type="button"
+              className="dusk-mobile-toggle"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open mobile navigation"
+              aria-expanded={menuOpen}
+            >
+              <Menu size={20} />
+            </button>
+          </div>
         </div>
+      </header>
 
-        {/* Minimal Toggle */}
-        <button
-          className="nav__toggle"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open navigation menu"
-          aria-expanded={menuOpen}
-        >
-          <span className="nav__toggle-bar" />
-          <span className="nav__toggle-bar" />
-          <span className="nav__toggle-bar" />
-        </button>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
+      {/* Full-Screen Mobile Menu Overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="mobile-menu"
+            className="dusk-mobile-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
             role="dialog"
             aria-modal="true"
-            aria-label="Navigation menu"
+            aria-label="Mobile navigation menu"
           >
-            {/* Header */}
-            <div className="mobile-menu__header">
-              <Link to="/" className="wordmark" onClick={() => setMenuOpen(false)}>
-                CHINTWO
+            <div className="dusk-mobile-menu-header">
+              <Link to="/" className="dusk-wordmark" onClick={() => setMenuOpen(false)}>
+                <span className="dusk-wordmark-title">CHINTWO</span>
+                <span className="dusk-wordmark-sub">STUDIO ARCHIVE</span>
               </Link>
               <button
+                type="button"
                 onClick={() => setMenuOpen(false)}
-                aria-label="Close menu"
-                style={{
-                  width: 44,
-                  height: 44,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.5rem',
-                  fontWeight: 300,
-                }}
+                className="dusk-mobile-menu-close"
+                aria-label="Close mobile navigation"
               >
-                ✕
+                <X size={22} />
               </button>
             </div>
 
-            {/* Navigation */}
-            <nav className="mobile-menu__nav">
+            <nav className="dusk-mobile-menu-links">
               {NAV_ITEMS.map((item, i) => (
                 <motion.div
                   key={item.path}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * i, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ delay: 0.04 * i, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <Link
                     to={item.path}
-                    className="mobile-menu__link"
+                    className={`dusk-mobile-link ${isCurrent(item.path) ? 'active' : ''}`}
                     onClick={() => setMenuOpen(false)}
                   >
-                    <span className="mobile-menu__index">{item.index}</span>
-                    {item.label}
+                    <span className="dusk-mobile-index">{item.index}</span>
+                    <span className="dusk-mobile-label">{item.label}</span>
                   </Link>
                 </motion.div>
               ))}
             </nav>
 
-            {/* Footer */}
-            <div className="mobile-menu__footer">
-              <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mobile-menu__social-link"
-                  >
-                    {link.label}
+            <div className="dusk-mobile-menu-footer">
+              <div className="dusk-mobile-actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    openCart();
+                  }}
+                  className="btn-dusk btn-dusk--primary"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <ShoppingBag size={16} />
+                  <span>VIEW COLLECTOR FOLIO ({totalCount})</span>
+                </button>
+              </div>
+
+              <div className="dusk-mobile-socials">
+                {settings.instagram && (
+                  <a href={settings.instagram} target="_blank" rel="noopener noreferrer">
+                    Instagram
                   </a>
-                ))}
+                )}
                 {settings.email && (
-                  <a href={`mailto:${settings.email}`} className="mobile-menu__social-link">
-                    Email
+                  <a href={`mailto:${settings.email}`}>
+                    {settings.email}
                   </a>
                 )}
               </div>
-              <span className="type-meta-sm" style={{ color: 'var(--color-muted)' }}>
-                {settings.copyrightText || `© ${new Date().getFullYear()} ${settings.artistName}`}
-              </span>
+              <p className="dusk-mobile-copy">
+                {settings.copyrightText || `© ${new Date().getFullYear()} Chintwo. All rights reserved.`}
+              </p>
             </div>
           </motion.div>
         )}

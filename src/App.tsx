@@ -3,11 +3,14 @@ import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './hooks/useAuth';
 import { ToastProvider } from './components/ui/Toast';
+import { ThemeProvider } from './context/ThemeContext';
+import { CartProvider } from './context/CartContext';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import LoadingState from './components/ui/LoadingState';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import AdminLayout from './components/admin/AdminLayout';
-import { CustomCursor } from './components/ui/motion';
+import LanternCursor from './components/lantern/LanternCursor';
+import CartDrawer from './components/cart/CartDrawer';
 
 function AdminShortcutListener() {
   const navigate = useNavigate();
@@ -28,6 +31,7 @@ function AdminShortcutListener() {
 const Home = lazy(() => import('./pages/public/Home'));
 const Work = lazy(() => import('./pages/public/Work'));
 const WorkDetail = lazy(() => import('./pages/public/WorkDetail'));
+const SeriesDetail = lazy(() => import('./pages/public/SeriesDetail'));
 const About = lazy(() => import('./pages/public/About'));
 const Journal = lazy(() => import('./pages/public/Journal'));
 const JournalPost = lazy(() => import('./pages/public/JournalPost'));
@@ -52,60 +56,71 @@ export default function App() {
   return (
     <ErrorBoundary>
       <HelmetProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <BrowserRouter>
-              <CustomCursor />
-              <AdminShortcutListener />
-              <Suspense fallback={<LoadingState />}>
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Home />} />
-                  <Route path="/work" element={<Work />} />
-                  <Route path="/work/:slug" element={<WorkDetail />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/journal" element={<Journal />} />
-                  <Route path="/journal/:slug" element={<JournalPost />} />
-                  <Route path="/editions" element={<Editions />} />
-                  <Route path="/editions/:slug" element={<EditionDetail />} />
-                  <Route path="/contact" element={<Contact />} />
+        <ThemeProvider>
+          <CartProvider>
+            <AuthProvider>
+              <ToastProvider>
+                <BrowserRouter>
+                  <LanternCursor />
+                  <CartDrawer />
+                  <AdminShortcutListener />
+                  <Suspense fallback={<LoadingState />}>
+                    <Routes>
+                      {/* Public Routes */}
+                      <Route path="/" element={<Home />} />
+                      <Route path="/works" element={<Work />} />
+                      <Route path="/work" element={<Work />} />
+                      <Route path="/works/:series" element={<SeriesDetail />} />
+                      <Route path="/works/:series/:slug" element={<WorkDetail />} />
+                      <Route path="/work/:slug" element={<WorkDetail />} />
+                      <Route path="/prints" element={<Editions />} />
+                      <Route path="/prints/:slug" element={<EditionDetail />} />
+                      <Route path="/editions" element={<Editions />} />
+                      <Route path="/editions/:slug" element={<EditionDetail />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/exhibitions" element={<About />} />
+                      <Route path="/journal" element={<Journal />} />
+                      <Route path="/journal/:slug" element={<JournalPost />} />
+                      <Route path="/contact" element={<Contact />} />
 
-                  {/* Legacy redirects */}
-                  <Route path="/me" element={<About />} />
-                  <Route path="/shop" element={<Editions />} />
-                  <Route path="/shop/:slug" element={<EditionDetail />} />
+                      {/* Legacy redirects */}
+                      <Route path="/me" element={<About />} />
+                      <Route path="/shop" element={<Editions />} />
+                      <Route path="/shop/:slug" element={<EditionDetail />} />
 
-                  {/* Admin Routes */}
-                  <Route path="/admin/login" element={<Login />} />
-                  <Route
-                    path="/admin"
-                    element={
-                      <ProtectedRoute>
-                        <AdminLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route index element={<Dashboard />} />
-                    <Route path="artworks" element={<ArtworksCMS />} />
-                    <Route path="artworks/new" element={<ArtworkForm />} />
-                    <Route path="artworks/:id" element={<ArtworkForm />} />
-                    <Route path="journal" element={<JournalCMS />} />
-                    <Route path="journal/new" element={<JournalForm />} />
-                    <Route path="journal/:id" element={<JournalForm />} />
-                    <Route path="shop" element={<ShopCMS />} />
-                    <Route path="shop/new" element={<ProductForm />} />
-                    <Route path="shop/:id" element={<ProductForm />} />
-                    <Route path="messages" element={<Messages />} />
-                    <Route path="settings" element={<Settings />} />
-                  </Route>
+                      {/* Admin Routes */}
+                      <Route path="/admin/login" element={<Login />} />
+                      <Route
+                        path="/admin"
+                        element={
+                          <ProtectedRoute>
+                            <AdminLayout />
+                          </ProtectedRoute>
+                        }
+                      >
+                        <Route index element={<Dashboard />} />
+                        <Route path="artworks" element={<ArtworksCMS />} />
+                        <Route path="artworks/new" element={<ArtworkForm />} />
+                        <Route path="artworks/:id" element={<ArtworkForm />} />
+                        <Route path="journal" element={<JournalCMS />} />
+                        <Route path="journal/new" element={<JournalForm />} />
+                        <Route path="journal/:id" element={<JournalForm />} />
+                        <Route path="shop" element={<ShopCMS />} />
+                        <Route path="shop/new" element={<ProductForm />} />
+                        <Route path="shop/:id" element={<ProductForm />} />
+                        <Route path="messages" element={<Messages />} />
+                        <Route path="settings" element={<Settings />} />
+                      </Route>
 
-                  {/* 404 */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </ToastProvider>
-        </AuthProvider>
+                      {/* 404 */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </BrowserRouter>
+              </ToastProvider>
+            </AuthProvider>
+          </CartProvider>
+        </ThemeProvider>
       </HelmetProvider>
     </ErrorBoundary>
   );
