@@ -1,5 +1,5 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { Save, CheckCircle2 } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { getSettings, updateSettings, defaultSettings } from '../../services/settingsService';
 import type { SiteSettings } from '../../types';
 import ImageUploader from '../../components/admin/ImageUploader';
@@ -45,7 +45,7 @@ export default function SettingsPage() {
       <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Settings</h1>
-          <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>Manage site branding, biography, socials and SEO</p>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>Manage site branding, biography, homepage content, socials and SEO</p>
         </div>
         <button
           type="button"
@@ -71,6 +71,9 @@ export default function SettingsPage() {
               <div>
                 <label className="admin-label">Short Tagline / Bio</label>
                 <input className="admin-input" name="shortBio" value={settings.shortBio} onChange={handleChange} />
+                <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>
+                  Used in the "03 / The Person" section on the homepage and the About page header.
+                </p>
               </div>
               <div>
                 <label className="admin-label">Full Biography (HTML / Paragraphs supported)</label>
@@ -83,7 +86,7 @@ export default function SettingsPage() {
           <div className="admin-card">
             <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', color: '#111827' }}>Artist Portrait / Studio Image</h2>
             <p style={{ fontSize: '0.8125rem', color: '#6b7280', marginBottom: '1rem' }}>
-              Shown on the &ldquo;Me / About&rdquo; page. Upload an image or paste a link.
+              Shown in the "03 / The Person" section on the homepage and the About page. Upload an image or paste a URL.
             </p>
             <ImageUploader
               images={settings.artistPortrait ? [settings.artistPortrait] : []}
@@ -93,155 +96,129 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* Homepage Hero */}
+          {/* Homepage Hero Content */}
           <div className="admin-card">
-            <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Homepage Hero Content</h2>
+            <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', color: '#111827' }}>Homepage Hero Content</h2>
+            <p style={{ fontSize: '0.8125rem', color: '#6b7280', marginBottom: '1.25rem' }}>
+              Controls the editorial hero section (01). The headline "A world shaped by imagination." is fixed. These fields control the supporting text.
+            </p>
             <div style={{ display: 'grid', gap: '1rem' }}>
               <div>
-                <label className="admin-label">Hero Statement (Revealed in X-Ray behind name)</label>
-                <input className="admin-input" name="homepageStatement" value={settings.homepageStatement} onChange={handleChange} />
+                <label className="admin-label">Hero Description Paragraph</label>
+                <textarea
+                  className="admin-textarea"
+                  name="homepageStatement"
+                  value={settings.homepageStatement}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="A creative practice that explores people, places, memories and the space in between reality and imagination."
+                />
+                <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>
+                  Displayed below "ART, IDEAS AND EVERYTHING IN BETWEEN." in the hero section.
+                </p>
               </div>
               <div>
-                <label className="admin-label">Hero Short Bio (Revealed in X-Ray behind name)</label>
-                <input className="admin-input" name="shortBio" value={settings.shortBio} onChange={handleChange} />
-              </div>
-              <div>
-                <label className="admin-label">Contact Callout Text</label>
-                <input className="admin-input" name="contactText" value={settings.contactText} onChange={handleChange} />
+                <label className="admin-label">Homepage Subtitle (The Person preview)</label>
+                <input
+                  className="admin-input"
+                  name="homepageSubtitle"
+                  value={settings.homepageSubtitle}
+                  onChange={handleChange}
+                  placeholder="Exploring solitude, memory, and myth through textured brushwork and quiet light"
+                />
+                <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>
+                  Used as the OG meta description and as a subtitle in various contexts.
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Homepage Sections & Hidden X-Ray Artworks */}
+          {/* Homepage Sections */}
           <div className="admin-card">
             <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', color: '#111827' }}>
-              Homepage Sections & Hidden X-Ray Artworks
+              Homepage Sections & Page Subtitles
             </h2>
             <p style={{ fontSize: '0.8125rem', color: '#6b7280', marginBottom: '1.25rem' }}>
-              Configure the subtitles and the hidden artworks revealed through the circular cursor lens on the homepage.
+              Configure the subtitles for each page's header. These appear across the Work, About, Journal, Editions, and Contact pages.
             </p>
 
             <div style={{ display: 'grid', gap: '1.5rem' }}>
-              {/* 01 Art */}
+              {/* 01 Work */}
               <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111827', marginBottom: '0.75rem' }}>
-                  Art Section
+                  01 / Work
                 </h3>
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  <div>
-                    <label className="admin-label">Subtitle</label>
-                    <input
-                      className="admin-input"
-                      name="artSublabel"
-                      value={settings.artSublabel || ''}
-                      onChange={handleChange}
-                      placeholder="Selected Paintings, Drawings & Archive"
-                    />
-                  </div>
-                  <div>
-                    <label className="admin-label">Hidden X-Ray Artwork Image</label>
-                    <ImageUploader
-                      images={settings.artXrayImage ? [settings.artXrayImage] : []}
-                      onChange={(imgs) => setSettings((prev) => ({ ...prev, artXrayImage: imgs[0] || '' }))}
-                      folder="settings/sections"
-                      maxFiles={1}
-                    />
-                  </div>
+                <div>
+                  <label className="admin-label">Page Subtitle</label>
+                  <input
+                    className="admin-input"
+                    name="artSublabel"
+                    value={settings.artSublabel || ''}
+                    onChange={handleChange}
+                    placeholder="Selected Paintings, Drawings & Archive"
+                  />
                 </div>
               </div>
 
-              {/* 02 Me */}
+              {/* 02 Person */}
               <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111827', marginBottom: '0.75rem' }}>
-                  Me Section
+                  02 / Person
                 </h3>
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  <div>
-                    <label className="admin-label">Subtitle</label>
-                    <input
-                      className="admin-input"
-                      name="meSublabel"
-                      value={settings.meSublabel || ''}
-                      onChange={handleChange}
-                      placeholder="Biography, Philosophy & Studio Practice"
-                    />
-                  </div>
-                  <div>
-                    <label className="admin-label">Hidden X-Ray Atelier / Portrait Image</label>
-                    <ImageUploader
-                      images={settings.meXrayImage ? [settings.meXrayImage] : []}
-                      onChange={(imgs) => setSettings((prev) => ({ ...prev, meXrayImage: imgs[0] || '' }))}
-                      folder="settings/sections"
-                      maxFiles={1}
-                    />
-                  </div>
+                <div>
+                  <label className="admin-label">Page Subtitle</label>
+                  <input
+                    className="admin-input"
+                    name="meSublabel"
+                    value={settings.meSublabel || ''}
+                    onChange={handleChange}
+                    placeholder="Biography, Philosophy & Studio Practice"
+                  />
                 </div>
               </div>
 
-              {/* 03 Journal */}
+              {/* 03 Notes */}
               <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111827', marginBottom: '0.75rem' }}>
-                  Journal Section
+                  03 / Notes
                 </h3>
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  <div>
-                    <label className="admin-label">Subtitle</label>
-                    <input
-                      className="admin-input"
-                      name="journalSublabel"
-                      value={settings.journalSublabel || ''}
-                      onChange={handleChange}
-                      placeholder="Studio Notes, Process & Literary Essays"
-                    />
-                  </div>
-                  <div>
-                    <label className="admin-label">Hidden X-Ray Manuscript / Ink Wash Image</label>
-                    <ImageUploader
-                      images={settings.journalXrayImage ? [settings.journalXrayImage] : []}
-                      onChange={(imgs) => setSettings((prev) => ({ ...prev, journalXrayImage: imgs[0] || '' }))}
-                      folder="settings/sections"
-                      maxFiles={1}
-                    />
-                  </div>
+                <div>
+                  <label className="admin-label">Page Subtitle</label>
+                  <input
+                    className="admin-input"
+                    name="journalSublabel"
+                    value={settings.journalSublabel || ''}
+                    onChange={handleChange}
+                    placeholder="Studio Notes, Process & Literary Essays"
+                  />
                 </div>
               </div>
 
-              {/* 04 Shop */}
+              {/* 04 Editions */}
               <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111827', marginBottom: '0.75rem' }}>
-                  Shop Section
+                  04 / Editions
                 </h3>
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  <div>
-                    <label className="admin-label">Subtitle</label>
-                    <input
-                      className="admin-input"
-                      name="shopSublabel"
-                      value={settings.shopSublabel || ''}
-                      onChange={handleChange}
-                      placeholder="Limited Edition Archival Prints & Objects"
-                    />
-                  </div>
-                  <div>
-                    <label className="admin-label">Hidden X-Ray Printmaking / Editions Image</label>
-                    <ImageUploader
-                      images={settings.shopXrayImage ? [settings.shopXrayImage] : []}
-                      onChange={(imgs) => setSettings((prev) => ({ ...prev, shopXrayImage: imgs[0] || '' }))}
-                      folder="settings/sections"
-                      maxFiles={1}
-                    />
-                  </div>
+                <div>
+                  <label className="admin-label">Page Subtitle</label>
+                  <input
+                    className="admin-input"
+                    name="shopSublabel"
+                    value={settings.shopSublabel || ''}
+                    onChange={handleChange}
+                    placeholder="Limited Edition Archival Prints & Objects"
+                  />
                 </div>
               </div>
 
               {/* 05 Contact */}
               <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
                 <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111827', marginBottom: '0.75rem' }}>
-                  Contact Section
+                  05 / Contact
                 </h3>
                 <div style={{ display: 'grid', gap: '0.75rem' }}>
                   <div>
-                    <label className="admin-label">Subtitle</label>
+                    <label className="admin-label">Page Subtitle</label>
                     <input
                       className="admin-input"
                       name="contactSublabel"
@@ -251,13 +228,18 @@ export default function SettingsPage() {
                     />
                   </div>
                   <div>
-                    <label className="admin-label">Hidden X-Ray Letterpress / Stationery Image</label>
-                    <ImageUploader
-                      images={settings.contactXrayImage ? [settings.contactXrayImage] : []}
-                      onChange={(imgs) => setSettings((prev) => ({ ...prev, contactXrayImage: imgs[0] || '' }))}
-                      folder="settings/sections"
-                      maxFiles={1}
+                    <label className="admin-label">Contact Section Callout Text</label>
+                    <textarea
+                      className="admin-textarea"
+                      name="contactText"
+                      value={settings.contactText}
+                      onChange={handleChange}
+                      rows={2}
+                      placeholder="Available for selected editorial commissions, original artwork acquisitions, gallery exhibitions, and collaborative inquiries."
                     />
+                    <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>
+                      Displayed in the "06 / Dialogue" section at the bottom of the homepage.
+                    </p>
                   </div>
                 </div>
               </div>

@@ -2,34 +2,53 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
     // ─── Artworks ─────────────────────────────────────
     match /artworks/{artworkId} {
-      allow read, write: if true;
+      allow read: if resource.data.published == true || isAuthenticated();
+      allow write: if isAuthenticated();
     }
 
     // ─── Journal ──────────────────────────────────────
     match /journal/{postId} {
-      allow read, write: if true;
+      allow read: if resource.data.published == true || isAuthenticated();
+      allow write: if isAuthenticated();
     }
 
-    // ─── Products ─────────────────────────────────────
+    // ─── Products / Editions ──────────────────────────
     match /products/{productId} {
-      allow read, write: if true;
+      allow read: if resource.data.published == true || isAuthenticated();
+      allow write: if isAuthenticated();
     }
 
-    // ─── Messages ─────────────────────────────────────
+    // ─── Messages & Inquiries ─────────────────────────
+    // Public visitors can only CREATE an inquiry with required validation.
+    // Reading, updating, and deleting inquiries is restricted strictly to authenticated admins.
     match /messages/{messageId} {
-      allow read, write: if true;
+      allow read, update, delete: if isAuthenticated();
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 200
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() > 0
+                    && request.resource.data.email.size() < 300
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() < 10000;
     }
 
-    // ─── Settings ─────────────────────────────────────
+    // ─── Site Settings ────────────────────────────────
     match /settings/{document} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
-    // ─── Catch-all ────────────────────────────────────
+    // ─── Default Deny Catch-all ───────────────────────
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

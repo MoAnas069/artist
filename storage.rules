@@ -2,31 +2,36 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // ─── Public read for all content images ──────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ─── Content images managed by admin ─────────────
     match /artworks/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated() && request.resource.size < 25 * 1024 * 1024;
     }
 
     match /journal/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated() && request.resource.size < 25 * 1024 * 1024;
     }
 
     match /products/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated() && request.resource.size < 25 * 1024 * 1024;
     }
 
     match /settings/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated() && request.resource.size < 15 * 1024 * 1024;
     }
 
     // ─── Reference files from contact form ───────────
     match /references/{allPaths=**} {
-      allow read: if request.auth != null;
-      allow write: if true;
+      allow read: if isAuthenticated();
+      allow write: if request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*|application/pdf');
     }
 
     // ─── Catch-all: deny ─────────────────────────────

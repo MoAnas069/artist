@@ -1,14 +1,18 @@
 interface EmptyStateProps {
   title?: string;
   message?: string;
+  description?: string;
   icon?: string;
 }
 
 export default function EmptyState({
   title = 'Nothing here yet',
-  message = 'Content will appear here once it has been added.',
+  message,
+  description,
   icon = '○',
 }: EmptyStateProps) {
+  const displayMessage = description || message || 'Content will appear here once it has been added.';
+
   return (
     <div
       style={{
@@ -38,7 +42,7 @@ export default function EmptyState({
         {title}
       </h3>
       <p className="type-body-sm" style={{ color: 'var(--color-muted)', maxWidth: 400 }}>
-        {message}
+        {displayMessage}
       </p>
     </div>
   );

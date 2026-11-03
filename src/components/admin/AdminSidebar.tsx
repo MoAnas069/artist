@@ -88,8 +88,8 @@ export default function AdminSidebar() {
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1a1a1a' }}>
-            STUDIO CMS
+          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1a1a1a', letterSpacing: '0.06em' }}>
+            CHINTWO STUDIO
           </span>
         </div>
 
@@ -144,8 +144,8 @@ export default function AdminSidebar() {
       >
         {/* Logo & Close on mobile */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem 1.5rem', borderBottom: '1px solid #e5e7eb', marginBottom: '1rem' }}>
-          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1a1a1a' }}>
-            STUDIO CMS
+          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1a1a1a', letterSpacing: '0.06em' }}>
+            CHINTWO STUDIO
           </span>
           <button
             onClick={() => setMobileOpen(false)}
